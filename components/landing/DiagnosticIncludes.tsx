@@ -2,28 +2,28 @@
 
 const items = [
   {
-    title: "Experiencia y velocidad",
-    body: "Cómo carga y se siente tu tienda en mobile, donde se juega la venta.",
+    title: "Velocidad y experiencia mobile",
+    body: "Qué tan rápido responde tu tienda y si está lista para vender en celular.",
   },
   {
-    title: "Claridad de la oferta",
-    body: "Si en segundos se entiende qué vendés y por qué deberían elegirte.",
+    title: "Plataforma y base técnica",
+    body: "Sobre qué está construida tu tienda y qué tan sólida es su base.",
   },
   {
-    title: "Señales de adquisición",
-    body: "Tu presencia en ads y qué tan preparada está la tienda para convertir tráfico pago.",
+    title: "Tracking y medición",
+    body: "Si tenés Pixel y analítica para medir lo que invertís en ads.",
   },
   {
-    title: "Retención visible",
-    body: "Indicios de email, recompra y programas que hacen volver al cliente.",
+    title: "Retención y email",
+    body: "Si tenés herramientas de email para que el cliente vuelva a comprar.",
   },
   {
-    title: "Confianza y prueba social",
-    body: "Reseñas, garantías y señales que reducen la fricción de comprar.",
+    title: "Prueba social y reseñas",
+    body: "Si tu tienda muestra reseñas que reducen la duda al comprar.",
   },
   {
-    title: "Preparación para IA y GEO",
-    body: "Qué tan lista está tu tienda para la búsqueda generativa y los agentes de IA.",
+    title: "Tu contexto de negocio",
+    body: "Tu facturación, oferta y forma de decidir — lo que no se ve desde afuera.",
   },
 ];
 
@@ -55,8 +55,8 @@ export function DiagnosticIncludes() {
         </div>
 
         <p className="mx-auto mt-8 max-w-2xl text-center text-sm text-ink-faint">
-          Todo esto lo analizamos desde afuera, con data pública de tu tienda.
-          Una auditoría completa va mucho más profundo.
+          Combinamos el análisis de tu tienda (con data pública) con tus
+          respuestas. Una auditoría completa va mucho más profundo.
         </p>
       </div>
     </section>

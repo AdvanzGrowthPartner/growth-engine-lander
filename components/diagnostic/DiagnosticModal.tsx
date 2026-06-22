@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useReducer, useRef } from "react";
+import { useCallback, useEffect, useReducer, useRef } from "react";
 import { useDiagnostic } from "@/components/diagnostic/DiagnosticProvider";
 import { questions } from "@/lib/questions";
 import { computeResult } from "@/lib/scoring";
-import type { DiagnosticResult, Lead } from "@/types/diagnostic";
+import type { DiagnosticResult, Lead, SiteSignals } from "@/types/diagnostic";
 
 import { ProgressBar } from "@/components/diagnostic/ProgressBar";
 import { IntroScreen } from "@/components/diagnostic/IntroScreen";
@@ -31,6 +31,7 @@ type State = {
   pain: string | null;
   answers: Record<string, number>;
   lead: Lead;
+  signals: SiteSignals | null;
   result: DiagnosticResult | null;
 };
 
@@ -42,7 +43,7 @@ type Action =
   | { type: "BACK" }
   | { type: "SET_LEAD"; field: keyof Lead; value: string }
   | { type: "SUBMIT" }
-  | { type: "FINISH" };
+  | { type: "FINISH"; signals: SiteSignals | null };
 
 function initialState(url = ""): State {
   return {
@@ -51,6 +52,7 @@ function initialState(url = ""): State {
     pain: null,
     answers: {},
     lead: { name: "", email: "", whatsapp: "", url },
+    signals: null,
     result: null,
   };
 }
@@ -94,7 +96,12 @@ function reducer(state: State, action: Action): State {
       return { ...state, step: "calculating" };
 
     case "FINISH":
-      return { ...state, step: "result", result: computeResult(state.answers) };
+      return {
+        ...state,
+        step: "result",
+        signals: action.signals,
+        result: computeResult(state.answers, action.signals),
+      };
 
     default:
       return state;
@@ -123,6 +130,12 @@ export function DiagnosticModal() {
   const panelRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const prevFocus = useRef<HTMLElement | null>(null);
+
+  // Callback estable para que CalculatingScreen no re-dispare el análisis.
+  const handleFinish = useCallback(
+    (signals: SiteSignals | null) => dispatch({ type: "FINISH", signals }),
+    []
+  );
 
   // Reset al abrir, con la URL capturada.
   useEffect(() => {
@@ -283,7 +296,7 @@ export function DiagnosticModal() {
           )}
 
           {state.step === "calculating" && (
-            <CalculatingScreen onComplete={() => dispatch({ type: "FINISH" })} />
+            <CalculatingScreen url={state.lead.url} onComplete={handleFinish} />
           )}
 
           {state.step === "result" && state.result && (

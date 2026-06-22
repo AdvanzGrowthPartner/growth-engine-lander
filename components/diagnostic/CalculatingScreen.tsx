@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { SiteSignals } from "@/types/diagnostic";
 
 const STAGES = [
   "Foundations",
@@ -13,38 +14,57 @@ const STAGES = [
   "Systems",
 ];
 
-// Pantalla 8 — Calculando: las 8 etapas se iluminan una a una, después pasa al resultado.
-export function CalculatingScreen({ onComplete }: { onComplete: () => void }) {
+// Pantalla 8 — Calculando: corre el análisis REAL de la tienda mientras se
+// iluminan las 8 etapas. La animación cubre la latencia del fetch (es honesto).
+export function CalculatingScreen({
+  url,
+  onComplete,
+}: {
+  url: string;
+  onComplete: (signals: SiteSignals | null) => void;
+}) {
   const [lit, setLit] = useState(0);
 
   useEffect(() => {
-    const reduce =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let cancelled = false;
+    const reduce = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    const minMs = reduce ? 400 : 2400; // tiempo mínimo en pantalla
+    const start = performance.now();
 
-    if (reduce) {
-      const t = setTimeout(() => {
-        setLit(STAGES.length);
-        onComplete();
-      }, 300);
-      return () => clearTimeout(t);
+    let interval: ReturnType<typeof setInterval> | undefined;
+    let finishTimer: ReturnType<typeof setTimeout> | undefined;
+
+    if (!reduce) {
+      interval = setInterval(() => {
+        setLit((n) => (n >= STAGES.length ? n : n + 1));
+      }, 260);
     }
 
-    const perStage = 260; // ms
-    const interval = setInterval(() => {
-      setLit((n) => {
-        if (n >= STAGES.length) return n;
-        return n + 1;
+    fetch("/api/analyze", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url }),
+    })
+      .then((r) => (r.ok ? r.json() : null))
+      .catch(() => null)
+      .then((signals: SiteSignals | null) => {
+        if (cancelled) return;
+        const wait = Math.max(0, minMs - (performance.now() - start));
+        finishTimer = setTimeout(() => {
+          if (cancelled) return;
+          setLit(STAGES.length);
+          onComplete(signals);
+        }, wait);
       });
-    }, perStage);
-
-    const done = setTimeout(onComplete, perStage * STAGES.length + 500);
 
     return () => {
-      clearInterval(interval);
-      clearTimeout(done);
+      cancelled = true;
+      if (interval) clearInterval(interval);
+      if (finishTimer) clearTimeout(finishTimer);
     };
-  }, [onComplete]);
+  }, [url, onComplete]);
 
   return (
     <div className="text-center">
@@ -54,6 +74,9 @@ export function CalculatingScreen({ onComplete }: { onComplete: () => void }) {
       <h2 className="mt-3 text-2xl font-bold text-ink sm:text-3xl">
         Analizando tu Growth Engine…
       </h2>
+      <p className="mt-2 text-sm text-ink-mute">
+        Revisando tu tienda con data pública.
+      </p>
 
       <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {STAGES.map((stage, i) => {
