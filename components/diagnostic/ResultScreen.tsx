@@ -8,12 +8,12 @@ const LEVEL_STYLES: Record<string, string> = {
   Avanzado: "text-cyan",
 };
 
-// Lo que se llevan si agendan (stack de valor).
+// Qué pasa en la auditoría gratuita (describe el proceso, no promete regalos).
+// TODO: confirmar con Matias los entregables reales del audit.
 const VALUE_STACK = [
-  "Informe completo de tu Growth Score por mail",
-  "El plan exacto para tus 3 fugas principales",
-  "Dashboard de métricas valorado en $500",
-  "Roadmap priorizado para tu etapa de negocio",
+  "Revisamos tu Growth Score punto por punto",
+  "Te mostramos cómo destrabar tus 3 fugas principales",
+  "Te vas con prioridades claras para tu etapa de negocio",
 ];
 
 // Pantalla 9 — Resultado: el ajá moment, estructurado para que quieran agendar.
@@ -139,7 +139,7 @@ export function ResultScreen({
       {/* BLOQUE 5 + 6 — Stack de valor + CTA con urgencia */}
       <div className="glass mt-8 rounded-xl2 p-6 text-left">
         <p className="text-center text-sm font-semibold text-ink">
-          🎁 Si agendás tu auditoría gratuita te llevás:
+          En tu auditoría gratuita 1:1:
         </p>
         <ul className="mt-4 flex flex-col gap-2">
           {VALUE_STACK.map((v) => (

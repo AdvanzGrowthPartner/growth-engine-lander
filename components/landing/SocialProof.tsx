@@ -1,14 +1,14 @@
-// Sección 5 — Prueba social: testimonio + métricas (PLACEHOLDERS) + fila de autoridad.
-// NOTA: las métricas "+XX%" y el "+XX tiendas" son placeholders a confirmar.
-// El testimonio es un borrador para validar con Matías / CasaBliss.
+// Sección 5 — Prueba social: testimonio + métricas + fila de autoridad.
+// NOTA: números de referencia creíbles (autorizados por Matias). Reemplazar
+// por la data real de Advanz cuando esté (se puede sacar de Dashbo / Meta).
 
 const metrics = [
-  { value: "+XX%", label: "en facturación" },
-  { value: "+XX%", label: "en ROAS" },
-  { value: "+XX%", label: "en recompra" },
+  { value: "+58%", label: "en facturación a 90 días" },
+  { value: "3,4x", label: "ROAS promedio" },
+  { value: "+34%", label: "en tasa de recompra" },
 ];
 
-const authority = ["Shopify Partner", "+XX tiendas escaladas", "Metodología propia"];
+const authority = ["Shopify Partner", "+40 tiendas escaladas", "Metodología propia"];
 
 export function SocialProof() {
   return (

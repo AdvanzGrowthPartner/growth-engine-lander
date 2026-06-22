@@ -13,7 +13,7 @@ export function PainScreen({
       <h2 className="text-2xl font-bold text-ink sm:text-3xl">
         ¿Qué es lo que más te frena hoy?
       </h2>
-      <p className="mt-2 text-ink-mute">Elegí la que más te representa.</p>
+      <p className="mt-2 text-ink-mute">Elige la que más te representa.</p>
 
       <div className="mt-6 flex flex-col gap-3">
         {pains.map((pain) => {

@@ -5,17 +5,17 @@ import { CTAButton } from "@/components/landing/CTAButton";
 const steps = [
   {
     n: "01",
-    title: "Dejás la URL de tu tienda",
+    title: "Dejas la URL de tu tienda",
     body: "Sin instalar nada. Analizamos con data pública.",
   },
   {
     n: "02",
-    title: "Respondés 6 preguntas rápidas",
+    title: "Respondes 6 preguntas rápidas",
     body: "Te toma unos 90 segundos. Una pantalla a la vez.",
   },
   {
     n: "03",
-    title: "Recibís tu Growth Score",
+    title: "Recibes tu Growth Score",
     body: "En pantalla al instante, más el informe completo por mail.",
   },
 ];
@@ -53,11 +53,11 @@ export function FinalCTA() {
           <div className="glow-violet pointer-events-none absolute -top-20 left-1/2 h-[400px] w-[400px] -translate-x-1/2 opacity-50" />
           <div className="relative">
             <h2 className="mx-auto max-w-2xl text-balance text-3xl font-bold tracking-tight sm:text-4xl">
-              Descubrí tu Growth Score{" "}
+              Descubre tu Growth Score{" "}
               <span className="text-gradient">en 90 segundos</span>
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-ink-mute">
-              Dejá de adivinar qué arreglar. Empezá por saber exactamente dónde
+              Deja de adivinar qué arreglar. Empieza por saber exactamente dónde
               está la fuga.
             </p>
 

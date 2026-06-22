@@ -11,11 +11,11 @@ const items = [
   },
   {
     title: "Tracking y medición",
-    body: "Si tenés Pixel y analítica para medir lo que invertís en ads.",
+    body: "Si tienes Pixel y analítica para medir lo que inviertes en ads.",
   },
   {
     title: "Retención y email",
-    body: "Si tenés herramientas de email para que el cliente vuelva a comprar.",
+    body: "Si tienes herramientas de email para que el cliente vuelva a comprar.",
   },
   {
     title: "Prueba social y reseñas",

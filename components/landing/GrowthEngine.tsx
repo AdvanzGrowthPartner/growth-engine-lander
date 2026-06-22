@@ -15,7 +15,7 @@ const stages = [
   {
     n: "03",
     name: "Validation",
-    line: "Confirmás con data por qué te compran, antes de escalar.",
+    line: "Confirmas con data por qué te compran, antes de escalar.",
   },
   {
     n: "04",
@@ -35,7 +35,7 @@ const stages = [
   {
     n: "07",
     name: "Feedback",
-    line: "Escuchás al mercado y al dato para corregir rápido.",
+    line: "Escuchas al mercado y al dato para corregir rápido.",
   },
   {
     n: "08",

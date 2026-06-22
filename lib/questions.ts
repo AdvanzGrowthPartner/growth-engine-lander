@@ -17,7 +17,7 @@ export const questions: Question[] = [
   {
     key: "ads",
     stage: "Acquisition",
-    prompt: "¿Cuánto invertís en publicidad al mes?",
+    prompt: "¿Cuánto inviertes en publicidad al mes?",
     options: [
       { label: "Todavía no invierto", score: 1 },
       { label: "Menos de $1.000 USD", score: 2 },
@@ -28,7 +28,7 @@ export const questions: Question[] = [
   {
     key: "oferta",
     stage: "Offer + Validation",
-    prompt: "¿Qué tan claro tenés por qué te compran?",
+    prompt: "¿Qué tan claro tienes por qué te compran?",
     options: [
       { label: "Lo tengo muy claro y validado con data", score: 5 },
       { label: "Tengo una idea pero no lo confirmé", score: 3 },
@@ -44,13 +44,13 @@ export const questions: Question[] = [
       { label: "Tengo flujos de email/automatización funcionando", score: 5 },
       { label: "Algo armé pero no sé si funciona", score: 3 },
       { label: "Sé que debería pero no lo tengo", score: 2 },
-      { label: "No sé de qué me hablás", score: 1 },
+      { label: "No sé de qué me hablas", score: 1 },
     ],
   },
   {
     key: "decision",
     stage: "Feedback + Systems",
-    prompt: "¿Cómo tomás las decisiones de tu ecommerce hoy?",
+    prompt: "¿Cómo tomas las decisiones de tu ecommerce hoy?",
     options: [
       { label: "Con dashboards y data en tiempo real", score: 5 },
       { label: "Reviso métricas de vez en cuando", score: 3 },

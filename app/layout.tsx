@@ -18,14 +18,14 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Growth Engine™ — Descubrí dónde está la fuga de tu ecommerce",
+  title: "Growth Engine™ — Descubre dónde está la fuga de tu ecommerce",
   description:
-    "Dejá la URL de tu tienda y recibí tu Growth Score en pantalla más un informe completo. Diagnóstico gratuito del Growth Engine de Advanz: 8 etapas para escalar tu ecommerce.",
+    "Deja la URL de tu tienda y recibe tu Growth Score en pantalla más un informe completo. Diagnóstico gratuito del Growth Engine de Advanz: 8 etapas para escalar tu ecommerce.",
   metadataBase: new URL("https://web.advanz.cl"),
   openGraph: {
     title: "Growth Engine™ — Tu Growth Score en 90 segundos",
     description:
-      "El problema no es tu tráfico. Es que estás adivinando qué parte de tu ecommerce está rota. Descubrí exactamente dónde está la fuga.",
+      "El problema no es tu tráfico. Es que estás adivinando qué parte de tu ecommerce está rota. Descubre exactamente dónde está la fuga.",
     type: "website",
     locale: "es_LA",
   },

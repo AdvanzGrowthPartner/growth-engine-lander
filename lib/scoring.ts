@@ -24,7 +24,7 @@ const LEVEL_TEXT: Record<Level, string> = {
   Crítico:
     "Tu motor tiene fugas en varias etapas a la vez. La buena noticia: hay mucho margen y un orden claro para destrabarlo.",
   Intermedio:
-    "Tenés una base que funciona, pero hay 2 o 3 etapas que le están poniendo techo al resto. Ahí está tu mayor oportunidad.",
+    "Tienes una base que funciona, pero hay 2 o 3 etapas que le están poniendo techo al resto. Ahí está tu mayor oportunidad.",
   Avanzado:
     "Tu motor está bien armado. Lo que te separa del siguiente nivel son ajustes finos en etapas puntuales.",
 };
@@ -34,13 +34,13 @@ const GENERIC_FINDING: Record<AreaKey, string> = {
   Foundations:
     "Tu base técnica tiene margen para cargar más rápido y convertir mejor.",
   Acquisition:
-    "Tu adquisición no rinde lo que invertís. Probable fuga de presupuesto antes de la conversión.",
+    "Tu adquisición no rinde lo que inviertes. Probable fuga de presupuesto antes de la conversión.",
   "Offer + Validation":
     "No está claro por qué te compran. Sin esto validado, todo lo de arriba escala adivinando.",
   Retention:
     "Estás dejando LTV sobre la mesa. Sin recompra, cada venta cuesta el doble.",
   "Feedback + Systems":
-    "Decidís sin data en tiempo real. Difícil saber qué mover sin volar a ciegas.",
+    "Decides sin data en tiempo real. Difícil saber qué mover sin volar a ciegas.",
 };
 
 function levelFor(score: number): Level {

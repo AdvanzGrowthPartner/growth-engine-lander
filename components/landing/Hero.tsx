@@ -25,7 +25,7 @@ export function Hero() {
 
         <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-ink-mute sm:text-xl">
           El problema no es tu tráfico. Es que estás adivinando qué parte de tu
-          ecommerce está rota. Dejá la URL de tu tienda y descubrí exactamente
+          ecommerce está rota. Deja la URL de tu tienda y descubre exactamente
           dónde está la fuga.
         </p>
 

@@ -34,10 +34,10 @@ export function GateScreen({
   return (
     <div>
       <h2 className="text-2xl font-bold text-ink sm:text-3xl">
-        Ya casi tenés tu resultado
+        Ya casi tienes tu resultado
       </h2>
       <p className="mt-2 text-ink-mute">
-        Completá esto para ver tu diagnóstico y recibir el informe completo.
+        Completa esto para ver tu diagnóstico y recibir el informe completo.
       </p>
 
       <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4" noValidate>
@@ -46,7 +46,7 @@ export function GateScreen({
           value={lead.name}
           onChange={(v) => onChange("name", v)}
           placeholder="Tu nombre"
-          error={touched && !nameOk ? "Decinos tu nombre" : ""}
+          error={touched && !nameOk ? "Dinos tu nombre" : ""}
           autoFocus
         />
         <Field
@@ -54,8 +54,8 @@ export function GateScreen({
           type="email"
           value={lead.email}
           onChange={(v) => onChange("email", v)}
-          placeholder="vos@tutienda.cl"
-          error={touched && !emailOk ? "Ingresá un email válido" : ""}
+          placeholder="tu@tutienda.cl"
+          error={touched && !emailOk ? "Ingresa un email válido" : ""}
         />
         <Field
           label="WhatsApp"
@@ -63,7 +63,7 @@ export function GateScreen({
           value={lead.whatsapp}
           onChange={(v) => onChange("whatsapp", v)}
           placeholder="+56 9 1234 5678"
-          error={touched && !whatsappOk ? "Ingresá un WhatsApp válido" : ""}
+          error={touched && !whatsappOk ? "Ingresa un WhatsApp válido" : ""}
         />
         {needsUrl && (
           <Field
@@ -71,7 +71,7 @@ export function GateScreen({
             value={lead.url}
             onChange={(v) => onChange("url", v)}
             placeholder="tutienda.cl"
-            error={touched && !urlOk ? "Ingresá la URL de tu tienda" : ""}
+            error={touched && !urlOk ? "Ingresa la URL de tu tienda" : ""}
           />
         )}
 

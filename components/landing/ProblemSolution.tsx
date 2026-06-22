@@ -3,7 +3,7 @@
 const pains = [
   {
     label: "Adquisición",
-    title: "Metés plata en ads y el ROAS no acompaña",
+    title: "Metes dinero en ads y el ROAS no acompaña",
     body: "Más presupuesto, mismo resultado. El tráfico llega pero la venta se cae antes de cerrar.",
   },
   {
@@ -13,8 +13,8 @@ const pains = [
   },
   {
     label: "Decisión",
-    title: "Cambiás cosas sin saber cuál movió la aguja",
-    body: "Decidís por intuición, no por data. Cada ajuste es una apuesta a ciegas.",
+    title: "Cambias cosas sin saber cuál movió la aguja",
+    body: "Decides por intuición, no por data. Cada ajuste es una apuesta a ciegas.",
   },
 ];
 
