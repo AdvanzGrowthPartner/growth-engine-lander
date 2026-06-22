@@ -1,0 +1,150 @@
+@import "tailwindcss";
+
+/* ============================================================
+   BRAND SYSTEM — Growth Engine™
+   Tokens centralizados (Tailwind v4 @theme).
+   Uso: bg-bg, bg-bg-card, text-ink, text-violet, font-mono, etc.
+   ============================================================ */
+@theme {
+  /* Fondos */
+  --color-bg: #0a0814;
+  --color-bg-soft: #120d20;
+  --color-bg-card: #16102a;
+
+  /* Acentos de marca */
+  --color-violet: #c15dff;
+  --color-cyan: #00ddfc;
+
+  /* Texto */
+  --color-ink: #f4f1fb;
+  --color-ink-mute: #a99fc4;
+  --color-ink-faint: #6e6691;
+
+  /* Bordes / hairlines */
+  --color-hair: rgba(193, 93, 255, 0.16);
+
+  /* Radios generosos */
+  --radius-xl2: 1.5rem;
+  --radius-xl3: 2rem;
+}
+
+/* Fuentes: Poppins (cuerpo/títulos) + Space Grotesk (datos/números/eyebrows).
+   Las variables --font-poppins / --font-grotesk las inyecta next/font en layout.tsx. */
+@theme inline {
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-grotesk), ui-monospace, monospace;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+html {
+  background-color: var(--color-bg);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Selección de texto en tono de marca */
+::selection {
+  background: rgba(193, 93, 255, 0.3);
+  color: var(--color-ink);
+}
+
+/* Foco visible accesible (teclado) */
+:focus-visible {
+  outline: 2px solid var(--color-cyan);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ============================================================
+   UTILIDADES DE MARCA
+   ============================================================ */
+
+/* Gradiente violeta → cyan como texto */
+.text-gradient {
+  background-image: linear-gradient(110deg, var(--color-violet), var(--color-cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Gradiente como fondo (botones / barras) */
+.bg-gradient-brand {
+  background-image: linear-gradient(110deg, var(--color-violet), var(--color-cyan));
+}
+
+/* Tarjeta glassmorphism sobre fondo oscuro */
+.glass {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.04),
+    rgba(255, 255, 255, 0.015)
+  );
+  border: 1px solid var(--color-hair);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Glow ambiental radial (se posiciona con utilidades de Tailwind) */
+.glow-violet {
+  background: radial-gradient(
+    circle at center,
+    rgba(193, 93, 255, 0.35),
+    transparent 70%
+  );
+}
+.glow-cyan {
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 221, 252, 0.28),
+    transparent 70%
+  );
+}
+
+/* ============================================================
+   ANIMACIONES
+   ============================================================ */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.5s ease-out both;
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Respeto a usuarios que prefieren menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
