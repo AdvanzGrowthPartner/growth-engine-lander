@@ -1,4 +1,5 @@
 import { UrlCaptureBar } from "@/components/landing/UrlCaptureBar";
+import { VslPlayer } from "@/components/landing/VslPlayer";
 
 // Sección 1 — Hero centrado: headline + VSL placeholder + barra de captura de URL.
 export function Hero() {
@@ -28,26 +29,9 @@ export function Hero() {
           dónde está la fuga.
         </p>
 
-        {/* VSL placeholder 16:9 — listo para enchufar un video después */}
+        {/* VSL — video real */}
         <div className="mx-auto mt-10 max-w-2xl">
-          <div className="glass group relative aspect-video w-full cursor-pointer overflow-hidden rounded-xl2">
-            <div className="glow-violet pointer-events-none absolute inset-0 opacity-40" />
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-              <span className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-brand shadow-[0_8px_30px_rgba(193,93,255,0.4)] transition-transform duration-200 group-hover:scale-110">
-                <svg
-                  viewBox="0 0 24 24"
-                  className="ml-1 h-7 w-7 text-bg"
-                  fill="currentColor"
-                  aria-hidden="true"
-                >
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              </span>
-              <span className="font-mono text-xs uppercase tracking-widest text-ink-faint">
-                Video · próximamente
-              </span>
-            </div>
-          </div>
+          <VslPlayer />
         </div>
 
         {/* Barra de captura de URL */}
