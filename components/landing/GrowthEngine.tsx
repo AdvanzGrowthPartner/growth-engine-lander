@@ -5,7 +5,7 @@ const stages = [
   {
     n: "01",
     name: "Foundations",
-    line: "La base técnica y de datos sobre la que todo se apoya.",
+    line: "A quién le vendes y por qué te eligen — la base de todo.",
   },
   {
     n: "02",
@@ -20,7 +20,7 @@ const stages = [
   {
     n: "04",
     name: "Acquisition",
-    line: "Tráfico que convierte, no solo clics que se pagan.",
+    line: "Tráfico que convierte: ads, SEO y búsqueda con IA (GEO).",
   },
   {
     n: "05",

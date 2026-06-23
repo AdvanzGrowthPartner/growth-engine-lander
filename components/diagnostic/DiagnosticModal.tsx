@@ -115,10 +115,10 @@ function reducer(state: State, action: Action): State {
 
 // Progreso visible solo en pains → preguntas → gate (6 pasos).
 function progressInfo(state: State): { current: number; total: number } | null {
-  if (state.step === "pains") return { current: 1, total: 6 };
+  if (state.step === "pains") return { current: 1, total: 7 };
   if (state.step === "question")
-    return { current: state.questionIndex + 2, total: 6 };
-  if (state.step === "gate") return { current: 6, total: 6 };
+    return { current: state.questionIndex + 2, total: 7 };
+  if (state.step === "gate") return { current: 7, total: 7 };
   return null;
 }
 

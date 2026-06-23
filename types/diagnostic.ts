@@ -1,12 +1,15 @@
 // Tipos del diagnóstico interactivo.
 
-// Cada pregunta mapea a un área del Growth Engine.
+// Las 8 etapas canónicas del Growth Engine (orden fijo).
 export type StageKey =
-  | "Madurez"
+  | "Foundations"
+  | "Offer"
+  | "Validation"
   | "Acquisition"
-  | "Offer + Validation"
+  | "Workflows"
   | "Retention"
-  | "Feedback + Systems";
+  | "Feedback"
+  | "Systems";
 
 export type QuestionOption = {
   label: string;
@@ -15,7 +18,7 @@ export type QuestionOption = {
 
 export type Question = {
   key: string; // identificador estable: "facturacion", "ads", ...
-  stage: StageKey;
+  stage: StageKey | "Contexto"; // a qué etapa alimenta (o contexto de negocio)
   prompt: string;
   options: QuestionOption[];
 };
@@ -45,6 +48,7 @@ export type SiteSignals = {
   hasEmailApp: boolean;
   emailApp: string | null;
   hasMobileViewport: boolean;
+  hasSchema: boolean; // datos estructurados JSON-LD (AI-readiness)
   isHttps: boolean;
   responseSeconds: number | null; // tiempo de respuesta del servidor (proxy de velocidad)
 };
@@ -52,12 +56,8 @@ export type SiteSignals = {
 // --------------------------------------------------------------
 // Resultado del diagnóstico.
 // --------------------------------------------------------------
-export type AreaKey =
-  | "Foundations"
-  | "Acquisition"
-  | "Offer + Validation"
-  | "Retention"
-  | "Feedback + Systems";
+// Las áreas del resultado son las 8 etapas canónicas.
+export type AreaKey = StageKey;
 
 export type AreaResult = {
   key: AreaKey;

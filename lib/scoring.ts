@@ -12,12 +12,28 @@ export const MAX_SCORE = 80;
 // Benchmark de referencia (PLACEHOLDER — reemplazar con dato real de Advanz).
 export const PEER_BENCHMARK = 63;
 
+// Orden canónico de las 8 etapas (no negociable).
+export const STAGE_ORDER: AreaKey[] = [
+  "Foundations",
+  "Offer",
+  "Validation",
+  "Acquisition",
+  "Workflows",
+  "Retention",
+  "Feedback",
+  "Systems",
+];
+
+// Etiquetas (coinciden con la sección de 8 etapas del lander).
 export const AREA_LABELS: Record<AreaKey, string> = {
-  Foundations: "Fundamentos (técnica)",
-  Acquisition: "Adquisición",
-  "Offer + Validation": "Oferta + Validación",
-  Retention: "Retención",
-  "Feedback + Systems": "Feedback + Sistemas",
+  Foundations: "Foundations",
+  Offer: "Offer",
+  Validation: "Validation",
+  Acquisition: "Acquisition",
+  Workflows: "Workflows",
+  Retention: "Retention",
+  Feedback: "Feedback",
+  Systems: "Systems",
 };
 
 const LEVEL_TEXT: Record<Level, string> = {
@@ -29,18 +45,22 @@ const LEVEL_TEXT: Record<Level, string> = {
     "Tu motor está bien armado. Lo que te separa del siguiente nivel son ajustes finos en etapas puntuales.",
 };
 
-// Texto genérico por área (cuando no hay un hallazgo específico detectado).
 const GENERIC_FINDING: Record<AreaKey, string> = {
   Foundations:
     "Tu base técnica tiene margen para cargar más rápido y convertir mejor.",
+  Offer: "No está del todo claro por qué te compran a ti y no a otro.",
+  Validation:
+    "Te falta validar con data qué funciona antes de escalar la inversión.",
   Acquisition:
     "Tu adquisición no rinde lo que inviertes. Probable fuga de presupuesto antes de la conversión.",
-  "Offer + Validation":
-    "No está claro por qué te compran. Sin esto validado, todo lo de arriba escala adivinando.",
+  Workflows:
+    "Tus herramientas no están conectadas: el trabajo de cada una no se compone.",
   Retention:
     "Estás dejando LTV sobre la mesa. Sin recompra, cada venta cuesta el doble.",
-  "Feedback + Systems":
-    "Decides sin data en tiempo real. Difícil saber qué mover sin volar a ciegas.",
+  Feedback:
+    "No estás escuchando al mercado de forma sistemática (reseñas, voz del cliente).",
+  Systems:
+    "Decides sin data en tiempo real y con procesos manuales que no escalan.",
 };
 
 function levelFor(score: number): Level {
@@ -58,7 +78,6 @@ function clamp(n: number): number {
   return Math.max(0, Math.min(100, Math.round(n)));
 }
 
-// Facturación mensual estimada (USD) según la respuesta de la pregunta 1.
 function revenueMid(answers: Record<string, number>): number {
   switch (answers["facturacion"]) {
     case 5:
@@ -76,16 +95,6 @@ function round100(n: number): number {
   return Math.round(n / 100) * 100;
 }
 
-// Construye una de las 5 áreas mezclando quiz + señales reales.
-function buildArea(
-  key: AreaKey,
-  score: number,
-  finding: string,
-  detected: boolean
-): AreaResult {
-  return { key, label: AREA_LABELS[key], score: clamp(score), finding, detected };
-}
-
 export function computeResult(
   answers: Record<string, number>,
   signals: SiteSignals | null
@@ -93,9 +102,36 @@ export function computeResult(
   const analyzed = !!signals?.ok;
   const detected: string[] = [];
 
-  // ---- ÁREA: Fundamentos (solo análisis) ----
+  // Helper: arma un área mezclando quiz + señal.
+  const make = (
+    key: AreaKey,
+    score: number,
+    finding: string,
+    isDetected: boolean
+  ): AreaResult => ({
+    key,
+    label: AREA_LABELS[key],
+    score: clamp(score),
+    finding,
+    detected: isDetected,
+  });
+
+  // ---- Señales auxiliares (0-100) ----
+  const sigOffer = analyzed && signals ? (signals.hasSchema ? 100 : 55) : 60;
+  const sigAcq =
+    analyzed && signals
+      ? signals.hasMetaPixel
+        ? 100
+        : signals.hasGA
+          ? 70
+          : 40
+      : 60;
+  const sigEmail = analyzed && signals ? (signals.hasEmailApp ? 100 : 35) : 55;
+  const sigReviews = analyzed && signals ? (signals.hasReviewsApp ? 100 : 30) : 50;
+
+  // ---- 1. Foundations (técnica / AI-readiness base, solo señal) ----
   let foundationsScore: number;
-  let foundationsFinding: string;
+  let foundationsFinding = GENERIC_FINDING.Foundations;
   let foundationsDetected = false;
   if (analyzed && signals) {
     let f = 100;
@@ -119,60 +155,72 @@ export function computeResult(
       foundationsFinding =
         "Tu tienda no usa HTTPS — genera desconfianza justo al momento de comprar.";
       foundationsDetected = true;
-    } else {
-      foundationsFinding = GENERIC_FINDING.Foundations;
     }
   } else {
-    // Sin análisis: neutro derivado del quiz.
-    foundationsScore =
-      (quizPct(answers, "ads") + quizPct(answers, "decision")) / 2;
-    foundationsFinding = GENERIC_FINDING.Foundations;
+    foundationsScore = 55;
   }
 
-  // ---- ÁREA: Adquisición (quiz ads + tracking) ----
-  let acqAnalysis = 60;
-  if (analyzed && signals) {
-    acqAnalysis = signals.hasMetaPixel ? 100 : signals.hasGA ? 70 : 40;
-  }
+  // ---- 2. Offer (quiz + schema) ----
+  const offerScore = analyzed
+    ? 0.6 * quizPct(answers, "oferta") + 0.4 * sigOffer
+    : quizPct(answers, "oferta");
+  const offerNoSchema = analyzed && signals && !signals.hasSchema;
+  const offerFinding = offerNoSchema
+    ? "Tus páginas no tienen datos estructurados (schema): Google y los agentes de IA no entienden bien tu oferta."
+    : GENERIC_FINDING.Offer;
+
+  // ---- 3. Validation (proxy: claridad de oferta + prueba social) ----
+  const validationScore = analyzed
+    ? (quizPct(answers, "oferta") + sigReviews) / 2
+    : quizPct(answers, "oferta");
+
+  // ---- 4. Acquisition (quiz + tracking) ----
   const acqScore = analyzed
-    ? 0.6 * quizPct(answers, "ads") + 0.4 * acqAnalysis
+    ? 0.6 * quizPct(answers, "ads") + 0.4 * sigAcq
     : quizPct(answers, "ads");
-  const acqNoTracking = analyzed && signals && !signals.hasGA && !signals.hasMetaPixel;
+  const acqNoTracking =
+    analyzed && signals && !signals.hasGA && !signals.hasMetaPixel;
   const acqFinding = acqNoTracking
-    ? "No detectamos Pixel ni Google Analytics en tu home — estás midiendo tus ads casi a ciegas."
+    ? "No detectamos Pixel ni Google Analytics en tu home — mides tus ads casi a ciegas."
     : GENERIC_FINDING.Acquisition;
 
-  // ---- ÁREA: Oferta + Validación (quiz oferta + reseñas) ----
-  let ovAnalysis = 60;
-  if (analyzed && signals) ovAnalysis = signals.hasReviewsApp ? 100 : 45;
-  const ovScore = analyzed
-    ? 0.6 * quizPct(answers, "oferta") + 0.4 * ovAnalysis
-    : quizPct(answers, "oferta");
-  const ovNoReviews = analyzed && signals && !signals.hasReviewsApp;
-  const ovFinding = ovNoReviews
-    ? "No vemos reseñas ni prueba social en tu tienda — la gente duda y se va antes de comprar."
-    : GENERIC_FINDING["Offer + Validation"];
+  // ---- 5. Workflows (quiz + email/automatización) ----
+  const wfScore = analyzed
+    ? 0.6 * quizPct(answers, "workflows") + 0.4 * sigEmail
+    : quizPct(answers, "workflows");
+  const wfNoEmail = analyzed && signals && !signals.hasEmailApp;
+  const wfFinding = wfNoEmail
+    ? "No detectamos herramientas de email/automatización conectadas a tu tienda."
+    : GENERIC_FINDING.Workflows;
 
-  // ---- ÁREA: Retención (quiz retención + email) ----
-  let retAnalysis = 55;
-  if (analyzed && signals) retAnalysis = signals.hasEmailApp ? 100 : 30;
+  // ---- 6. Retention (quiz + email) ----
   const retScore = analyzed
-    ? 0.55 * quizPct(answers, "retencion") + 0.45 * retAnalysis
+    ? 0.55 * quizPct(answers, "retencion") + 0.45 * sigEmail
     : quizPct(answers, "retencion");
   const retNoEmail = analyzed && signals && !signals.hasEmailApp;
   const retFinding = retNoEmail
-    ? "No detectamos herramienta de email marketing — cada cliente que compra se va y no vuelve."
+    ? "Sin email marketing activo, cada cliente que compra se va y no vuelve."
     : GENERIC_FINDING.Retention;
 
-  // ---- ÁREA: Feedback + Sistemas (solo quiz) ----
-  const fsScore = quizPct(answers, "decision");
+  // ---- 7. Feedback (solo señal: reseñas) ----
+  const fbScore = analyzed && signals ? (signals.hasReviewsApp ? 100 : 30) : 50;
+  const fbNoReviews = analyzed && signals && !signals.hasReviewsApp;
+  const fbFinding = fbNoReviews
+    ? "No vemos reseñas ni captura de feedback — no estás escuchando a tu mercado."
+    : GENERIC_FINDING.Feedback;
+
+  // ---- 8. Systems (solo quiz) ----
+  const sysScore = quizPct(answers, "decision");
 
   const areas: AreaResult[] = [
-    buildArea("Foundations", foundationsScore, foundationsFinding, foundationsDetected),
-    buildArea("Acquisition", acqScore, acqFinding, !!acqNoTracking),
-    buildArea("Offer + Validation", ovScore, ovFinding, !!ovNoReviews),
-    buildArea("Retention", retScore, retFinding, !!retNoEmail),
-    buildArea("Feedback + Systems", fsScore, GENERIC_FINDING["Feedback + Systems"], false),
+    make("Foundations", foundationsScore, foundationsFinding, foundationsDetected),
+    make("Offer", offerScore, offerFinding, !!offerNoSchema),
+    make("Validation", validationScore, GENERIC_FINDING.Validation, false),
+    make("Acquisition", acqScore, acqFinding, !!acqNoTracking),
+    make("Workflows", wfScore, wfFinding, !!wfNoEmail),
+    make("Retention", retScore, retFinding, !!retNoEmail),
+    make("Feedback", fbScore, fbFinding, !!fbNoReviews),
+    make("Systems", sysScore, GENERIC_FINDING.Systems, false),
   ];
 
   // ---- Score global (0-80) ----
@@ -180,21 +228,31 @@ export function computeResult(
   const score = Math.round((avg / 100) * MAX_SCORE);
   const level = levelFor(score);
 
-  // ---- 3 fugas más débiles ----
-  const gaps = [...areas].sort((a, b) => a.score - b.score).slice(0, 3);
+  // ---- Fugas: solo áreas realmente débiles (hasta 3), en ORDEN del Growth Engine ----
+  // Si todo está fuerte, mostramos solo la etapa más floja como "próxima oportunidad".
+  const WEAK_THRESHOLD = 60;
+  const weak = [...areas]
+    .filter((a) => a.score < WEAK_THRESHOLD)
+    .sort((a, b) => a.score - b.score)
+    .slice(0, 3);
+  const selected = weak.length
+    ? weak
+    : [...areas].sort((a, b) => a.score - b.score).slice(0, 1);
+  const gaps = selected.sort(
+    (a, b) => STAGE_ORDER.indexOf(a.key) - STAGE_ORDER.indexOf(b.key)
+  );
 
   // ---- Hallazgos reales (bloque "esto detectamos") ----
   if (analyzed && signals) {
     if (signals.platform) detected.push(`Plataforma: ${signals.platform}`);
     detected.push(
-      signals.hasReviewsApp
-        ? `Reseñas: ${signals.reviewsApp} ✓`
-        : "Reseñas: no detectadas"
+      signals.hasSchema ? "Datos estructurados (schema) ✓" : "Sin schema (AI-readiness)"
     );
     detected.push(
-      signals.hasEmailApp
-        ? `Email marketing: ${signals.emailApp} ✓`
-        : "Email marketing: no detectado"
+      signals.hasReviewsApp ? `Reseñas: ${signals.reviewsApp} ✓` : "Reseñas: no detectadas"
+    );
+    detected.push(
+      signals.hasEmailApp ? `Email: ${signals.emailApp} ✓` : "Email marketing: no detectado"
     );
     if (signals.hasGA || signals.hasMetaPixel) {
       const t = [signals.hasMetaPixel && "Meta Pixel", signals.hasGA && "Google Analytics"]

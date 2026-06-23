@@ -92,7 +92,9 @@ export function ResultScreen({
       {/* BLOQUE 3 — Las 3 fugas (con curiosity gap) */}
       <div className="mt-8 text-left">
         <p className="mb-3 font-mono text-xs uppercase tracking-widest text-ink-faint">
-          Tus 3 fugas más urgentes
+          {result.gaps.length === 1
+            ? "Tu próxima oportunidad"
+            : `Tus ${result.gaps.length} fugas más urgentes`}
         </p>
         <div className="flex flex-col gap-3">
           {result.gaps.map((gap, i) => (
@@ -118,6 +120,15 @@ export function ResultScreen({
         <p className="mt-3 text-sm text-ink-faint">
           El plan exacto para destrabar cada una te lo mostramos en la sesión 1:1.
         </p>
+        <p className="mt-2 text-sm text-ink-mute">
+          Cada etapa que ordenas acelera la siguiente — por eso el orden importa.
+        </p>
+        {result.gaps.some((g) => g.key === "Systems") && (
+          <p className="mt-2 text-sm text-amber-300/90">
+            Automatizar antes de retener y escuchar solo escala el problema:
+            primero el orden, después los sistemas.
+          </p>
+        )}
       </div>
 
       {/* BLOQUE 4 — Benchmark vs. pares */}

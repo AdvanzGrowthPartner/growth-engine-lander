@@ -110,6 +110,10 @@ export function analyzeHtml(
 
   const hasMobileViewport = /<meta[^>]+name=["']viewport["']/i.test(html);
 
+  // Datos estructurados (JSON-LD) = señal de AI-readiness / PDPs para agentes.
+  const hasSchema =
+    /application\/ld\+json/i.test(html) || /itemtype=["']https?:\/\/schema\.org/i.test(html);
+
   return {
     ok: true,
     url,
@@ -122,6 +126,7 @@ export function analyzeHtml(
     hasEmailApp: !!emailApp,
     emailApp,
     hasMobileViewport,
+    hasSchema,
     isHttps: url.startsWith("https://"),
     responseSeconds,
   };
@@ -141,6 +146,7 @@ export function emptySignals(url: string): SiteSignals {
     hasEmailApp: false,
     emailApp: null,
     hasMobileViewport: false,
+    hasSchema: false,
     isHttps: url.startsWith("https://"),
     responseSeconds: null,
   };
