@@ -2,46 +2,14 @@
 // Esta es la sección diferenciadora.
 
 const stages = [
-  {
-    n: "01",
-    name: "Foundations",
-    line: "A quién le vendes y por qué te eligen — la base de todo.",
-  },
-  {
-    n: "02",
-    name: "Offer",
-    line: "Una propuesta que se entiende y se desea en segundos.",
-  },
-  {
-    n: "03",
-    name: "Validation",
-    line: "Confirmas con data por qué te compran, antes de escalar.",
-  },
-  {
-    n: "04",
-    name: "Acquisition",
-    line: "Tráfico que convierte: ads, SEO y búsqueda con IA (GEO).",
-  },
-  {
-    n: "05",
-    name: "Workflows",
-    line: "Procesos y automatizaciones que sostienen el crecimiento.",
-  },
-  {
-    n: "06",
-    name: "Retention",
-    line: "Que el cliente vuelva y compre más de una vez.",
-  },
-  {
-    n: "07",
-    name: "Feedback",
-    line: "Escuchas al mercado y al dato para corregir rápido.",
-  },
-  {
-    n: "08",
-    name: "Systems",
-    line: "Automatización e IA que multiplican lo que ya funciona.",
-  },
+  { n: "01", name: "Foundations", line: "A quién vendes y por qué." },
+  { n: "02", name: "Offer", line: "Qué vendes y por qué tú." },
+  { n: "03", name: "Validation", line: "Qué dice el mercado." },
+  { n: "04", name: "Acquisition", line: "Tráfico que convierte." },
+  { n: "05", name: "Workflows", line: "Tus herramientas, conectadas." },
+  { n: "06", name: "Retention", line: "Que vuelvan a comprar." },
+  { n: "07", name: "Feedback", line: "Escuchar al mercado." },
+  { n: "08", name: "Systems", line: "Automatizar lo que funciona." },
 ];
 
 export function GrowthEngine() {
@@ -85,9 +53,8 @@ export function GrowthEngine() {
             El compuesto
           </p>
           <p className="mt-4 text-pretty text-lg leading-relaxed text-ink sm:text-xl">
-            Una mejor validación baja tu CAC. Una mejor adquisición llena tu
-            retención. Una mejor retención te da data para escuchar al mercado y
-            volver a empezar, más arriba.{" "}
+            Cada etapa acelera la siguiente: mejor validación baja tu CAC, mejor
+            adquisición llena tu retención.{" "}
             <span className="font-semibold text-gradient">
               Eso es el compuesto
             </span>{" "}

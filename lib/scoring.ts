@@ -102,19 +102,27 @@ export function computeResult(
   const analyzed = !!signals?.ok;
   const detected: string[] = [];
 
+  // Estado por etapa (estilo Harubom).
+  const statusFor = (s: number): AreaResult["status"] =>
+    s >= 72 ? "Sano" : s >= 48 ? "Optimizable" : "Urgente";
+
   // Helper: arma un área mezclando quiz + señal.
   const make = (
     key: AreaKey,
     score: number,
     finding: string,
     isDetected: boolean
-  ): AreaResult => ({
-    key,
-    label: AREA_LABELS[key],
-    score: clamp(score),
-    finding,
-    detected: isDetected,
-  });
+  ): AreaResult => {
+    const s = clamp(score);
+    return {
+      key,
+      label: AREA_LABELS[key],
+      score: s,
+      status: statusFor(s),
+      finding,
+      detected: isDetected,
+    };
+  };
 
   // ---- Señales auxiliares (0-100) ----
   const sigOffer = analyzed && signals ? (signals.hasSchema ? 100 : 55) : 60;

@@ -4,17 +4,17 @@ const pains = [
   {
     label: "Adquisición",
     title: "Metes dinero en ads y el ROAS no acompaña",
-    body: "Más presupuesto, mismo resultado. El tráfico llega pero la venta se cae antes de cerrar.",
+    body: "Más presupuesto, mismo resultado. La venta se cae antes de cerrar.",
   },
   {
     label: "Operación",
     title: "Proveedores sueltos que no conversan entre sí",
-    body: "Cada uno optimiza su pedacito y nadie mira el negocio completo. El resultado no compone.",
+    body: "Cada uno optimiza su parte y nadie mira el negocio completo.",
   },
   {
     label: "Decisión",
     title: "Cambias cosas sin saber cuál movió la aguja",
-    body: "Decides por intuición, no por data. Cada ajuste es una apuesta a ciegas.",
+    body: "Decides por intuición, no por data. Cada ajuste es a ciegas.",
   },
 ];
 

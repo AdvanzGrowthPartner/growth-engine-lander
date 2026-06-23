@@ -164,6 +164,14 @@ export function DiagnosticModal() {
       pain: state.pain,
       score: r.score,
       level: r.level,
+      // Respuestas de filtro crudas (para calificar y nutrir en GHL).
+      respuestas: state.answers,
+      // Estado por etapa del engine.
+      etapas: r.areas.map((a) => ({
+        etapa: a.label,
+        estado: a.status,
+        score: a.score,
+      })),
       gaps: r.gaps.map((g) => ({ area: g.label, score: g.score })),
       loss: r.loss,
       detected: r.detected,
@@ -172,7 +180,7 @@ export function DiagnosticModal() {
       pageUrl: typeof window !== "undefined" ? window.location.href : "",
       referrer: typeof document !== "undefined" ? document.referrer : "",
     });
-  }, [state.step, state.result, state.lead, state.pain]);
+  }, [state.step, state.result, state.lead, state.pain, state.answers]);
 
   // Bloqueo de scroll + restaurar foco al cerrar.
   useEffect(() => {

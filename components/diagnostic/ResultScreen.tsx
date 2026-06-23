@@ -1,5 +1,4 @@
-import type { DiagnosticResult } from "@/types/diagnostic";
-import { MAX_SCORE } from "@/lib/scoring";
+import type { AreaResult, DiagnosticResult } from "@/types/diagnostic";
 import { ScoreRing } from "@/components/diagnostic/ScoreRing";
 
 const LEVEL_STYLES: Record<string, string> = {
@@ -8,15 +7,10 @@ const LEVEL_STYLES: Record<string, string> = {
   Avanzado: "text-cyan",
 };
 
-// Qué pasa en la sesión 1:1 (describe el proceso, no promete regalos).
-// El valor se transmite por el contenido, no diciendo "gratis".
-const VALUE_STACK = [
-  "Repasamos juntos tu Growth Score y tus 3 fugas",
-  "Te mostramos cómo el Growth Engine las resuelve",
-  "Sales con un plan de prioridades para tu tienda",
-];
+// Etapas que dependen de data interna → se profundizan en la llamada (estilo Harubom).
+const LOCKED = new Set(["Retention", "Feedback", "Systems"]);
 
-// Pantalla 9 — Resultado: el ajá moment, estructurado para que quieran agendar.
+// Pantalla 9 — Resultado: estado del engine + anclaje de valor → agendar.
 export function ResultScreen({
   result,
   url,
@@ -38,7 +32,7 @@ export function ResultScreen({
         </p>
       )}
 
-      {/* BLOQUE 1 — Score + veredicto */}
+      {/* Score + nivel */}
       <div className="mt-4">
         <ScoreRing score={result.score} />
       </div>
@@ -53,26 +47,22 @@ export function ResultScreen({
         {result.levelText}
       </p>
 
-      {/* BLOQUE "wow" — esto detectamos en tu tienda */}
-      {result.analyzed && result.detected.length > 0 && (
-        <div className="mt-6 rounded-xl2 border border-hair bg-bg-card/50 p-5 text-left">
-          <p className="mb-3 font-mono text-xs uppercase tracking-widest text-cyan">
-            Analizamos tu tienda · esto encontramos
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {result.detected.map((d) => (
-              <span
-                key={d}
-                className="rounded-full border border-hair bg-bg-soft px-3 py-1 font-mono text-xs text-ink-mute"
-              >
-                {d}
-              </span>
-            ))}
-          </div>
+      {/* Estado del engine — 8 etapas con badge */}
+      <div className="mt-8 rounded-xl2 border border-hair bg-bg-card/50 p-5 text-left">
+        <p className="mb-1 font-mono text-xs uppercase tracking-widest text-cyan">
+          El estado de tu engine
+        </p>
+        <p className="mb-3 text-xs text-ink-faint">
+          Esto es lo que detectamos desde fuera, en tus 8 etapas.
+        </p>
+        <div>
+          {result.areas.map((a, i) => (
+            <StageRow key={a.key} area={a} index={i} />
+          ))}
         </div>
-      )}
+      </div>
 
-      {/* BLOQUE 2 — Lo que te está costando */}
+      {/* Pérdida estimada */}
       {result.loss && (
         <div className="mt-6 rounded-xl2 border border-red-400/30 bg-red-500/5 p-6 text-center">
           <p className="font-mono text-xs uppercase tracking-widest text-red-300">
@@ -83,101 +73,21 @@ export function ResultScreen({
             <span className="text-lg font-semibold text-ink-mute"> / mes</span>
           </p>
           <p className="mt-2 text-sm text-ink-mute">
-            Estimado según tu facturación y las fugas detectadas. Cada mes que
-            sigue, se acumula.
+            Estimado según tu facturación y las fugas detectadas.
           </p>
         </div>
       )}
 
-      {/* BLOQUE 3 — Las 3 fugas (con curiosity gap) */}
-      <div className="mt-8 text-left">
-        <p className="mb-3 font-mono text-xs uppercase tracking-widest text-ink-faint">
-          {result.gaps.length === 1
-            ? "Tu próxima oportunidad"
-            : `Tus ${result.gaps.length} fugas más urgentes`}
+      {/* Anclaje de valor + CTA */}
+      <div className="glass mt-8 rounded-xl2 p-6 text-center sm:p-8">
+        <p className="font-mono text-xs uppercase tracking-widest text-ink-faint">
+          Valor del diagnóstico completo
         </p>
-        <div className="flex flex-col gap-3">
-          {result.gaps.map((gap, i) => (
-            <div
-              key={gap.key}
-              className="rounded-xl2 border border-hair bg-bg-card/50 p-4"
-            >
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-sm text-gradient">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span className="font-semibold text-ink">{gap.label}</span>
-                {gap.detected && (
-                  <span className="rounded-full bg-cyan/15 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-cyan">
-                    detectado
-                  </span>
-                )}
-              </div>
-              <p className="mt-1.5 text-sm text-ink-mute">{gap.finding}</p>
-            </div>
-          ))}
-        </div>
-        <p className="mt-3 text-sm text-ink-faint">
-          El plan exacto para destrabar cada una te lo mostramos en la sesión 1:1.
+        <p className="mt-1 text-3xl font-extrabold text-gradient">US$500</p>
+        <p className="mt-2 text-sm text-ink-mute">
+          Lo preparamos completo con tu data y te lo enviamos al mail al agendar.
+          Vigencia <span className="font-semibold text-ink">48 horas</span>.
         </p>
-        {result.gaps.some((g) => g.key === "Systems") && (
-          <p className="mt-2 text-sm text-amber-300/90">
-            Automatizar antes de retener y escuchar solo escala el problema:
-            primero el orden, después los sistemas.
-          </p>
-        )}
-      </div>
-
-      {/* BLOQUE 4 — Tu score vs. tu potencial */}
-      <div className="mt-8 rounded-xl2 border border-hair bg-bg-card/50 p-5 text-left">
-        <p className="mb-4 font-mono text-xs uppercase tracking-widest text-ink-faint">
-          Dónde estás vs. dónde podrías estar
-        </p>
-        <BenchBar label="Tu tienda hoy" value={result.benchmark.you} accent />
-        <div className="h-3" />
-        <BenchBar
-          label="Tiendas que ordenan las 8 etapas"
-          value={result.benchmark.peers}
-        />
-        {result.benchmark.peers > result.benchmark.you && (
-          <p className="mt-3 text-sm text-ink-mute">
-            Te separan{" "}
-            <span className="font-semibold text-ink">
-              {result.benchmark.peers - result.benchmark.you} puntos
-            </span>{" "}
-            de las tiendas que ya ordenaron su negocio. Eso son ventas que estás
-            dejando pasar.
-          </p>
-        )}
-        <p className="mt-2 font-mono text-[11px] text-ink-faint">
-          * Promedio de referencia (estimado).
-        </p>
-      </div>
-
-      {/* BLOQUE 5 + 6 — Stack de valor + CTA con urgencia */}
-      <div className="glass mt-8 rounded-xl2 p-6 text-left">
-        <p className="text-center text-sm font-semibold text-ink">
-          En tu sesión 1:1 con un especialista de Advanz:
-        </p>
-        <ul className="mt-4 flex flex-col gap-2">
-          {VALUE_STACK.map((v) => (
-            <li key={v} className="flex items-start gap-2 text-sm text-ink-mute">
-              <svg
-                viewBox="0 0 20 20"
-                className="mt-0.5 h-4 w-4 shrink-0 text-cyan"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M16.7 5.3a1 1 0 010 1.4l-7.5 7.5a1 1 0 01-1.4 0l-3.5-3.5a1 1 0 111.4-1.4l2.8 2.8 6.8-6.8a1 1 0 011.4 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              {v}
-            </li>
-          ))}
-        </ul>
 
         <button
           type="button"
@@ -187,42 +97,62 @@ export function ResultScreen({
           Agendar mi sesión 1:1
         </button>
         <p className="mt-3 text-center font-mono text-xs text-ink-faint">
-          Cupos limitados por semana · sin compromiso
+          30 min · sin compromiso · salimos con un plan claro
         </p>
       </div>
 
       <p className="mt-5 font-mono text-xs text-ink-faint">
-        📩 Tu informe completo va a{" "}
+        📩 Agendes o no, tu informe llega a{" "}
         <span className="text-ink-mute break-all">{email || "tu email"}</span>
       </p>
     </div>
   );
 }
 
-function BenchBar({
-  label,
-  value,
-  accent,
-}: {
-  label: string;
-  value: number;
-  accent?: boolean;
-}) {
-  const pct = Math.max(4, Math.min(100, (value / MAX_SCORE) * 100));
+function StageRow({ area, index }: { area: AreaResult; index: number }) {
+  const locked = LOCKED.has(area.key);
   return (
-    <div>
-      <div className="mb-1 flex items-center justify-between text-xs">
-        <span className="text-ink-mute">{label}</span>
-        <span className="font-mono text-ink">{value}</span>
-      </div>
-      <div className="h-2.5 overflow-hidden rounded-full bg-bg-soft">
-        <div
-          className={`h-full rounded-full ${
-            accent ? "bg-gradient-brand" : "bg-ink-faint/50"
-          }`}
-          style={{ width: `${pct}%` }}
-        />
+    <div className="flex items-start gap-3 border-b border-hair/40 py-2.5 last:border-0">
+      <span className="w-5 shrink-0 font-mono text-xs text-ink-faint">
+        {String(index + 1).padStart(2, "0")}
+      </span>
+      <div className="flex-1">
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-sm font-semibold text-ink">{area.label}</span>
+          {locked ? <LockBadge /> : <StatusBadge status={area.status} />}
+        </div>
+        {locked ? (
+          <p className="mt-0.5 text-xs text-ink-faint">
+            Necesita tu data interna · se profundiza en la llamada
+          </p>
+        ) : area.status === "Urgente" ? (
+          <p className="mt-0.5 text-xs text-ink-mute">{area.finding}</p>
+        ) : null}
       </div>
     </div>
+  );
+}
+
+const STATUS_STYLES: Record<string, string> = {
+  Sano: "bg-emerald-500/15 text-emerald-300",
+  Optimizable: "bg-amber-500/15 text-amber-300",
+  Urgente: "bg-red-500/15 text-red-300",
+};
+
+function StatusBadge({ status }: { status: AreaResult["status"] }) {
+  return (
+    <span
+      className={`shrink-0 rounded-full px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider ${STATUS_STYLES[status]}`}
+    >
+      {status}
+    </span>
+  );
+}
+
+function LockBadge() {
+  return (
+    <span className="shrink-0 rounded-full bg-bg-soft px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-ink-faint">
+      🔒 En la llamada
+    </span>
   );
 }

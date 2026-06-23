@@ -59,10 +59,14 @@ export type SiteSignals = {
 // Las áreas del resultado son las 8 etapas canónicas.
 export type AreaKey = StageKey;
 
+// Estado por etapa (estilo Harubom).
+export type AreaStatus = "Sano" | "Optimizable" | "Urgente";
+
 export type AreaResult = {
   key: AreaKey;
   label: string; // nombre legible en español
   score: number; // 0-100
+  status: AreaStatus;
   finding: string; // hallazgo específico (si se detectó) o texto genérico
   detected: boolean; // true si proviene del análisis real de la tienda
 };
