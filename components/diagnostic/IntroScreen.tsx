@@ -22,8 +22,8 @@ export function IntroScreen({
         )}
       </h2>
       <p className="mt-4 text-ink-mute">
-        Son 7 pasos rápidos · te toma{" "}
-        <span className="font-semibold text-ink">~90 segundos</span>. Al final
+        Son 6 pasos rápidos · te toma{" "}
+        <span className="font-semibold text-ink">~60 segundos</span>. Al final
         ves tu Growth Score en pantalla y te mandamos el informe completo.
       </p>
       <button

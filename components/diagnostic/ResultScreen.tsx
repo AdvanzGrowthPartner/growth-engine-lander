@@ -1,5 +1,4 @@
 import type { DiagnosticResult } from "@/types/diagnostic";
-import { MAX_SCORE } from "@/lib/scoring";
 import { ScoreRing } from "@/components/diagnostic/ScoreRing";
 
 const LEVEL_STYLES: Record<string, string> = {
@@ -8,15 +7,17 @@ const LEVEL_STYLES: Record<string, string> = {
   Avanzado: "text-cyan",
 };
 
-// Qué pasa en la sesión 1:1 (describe el proceso, no promete regalos).
-// El valor se transmite por el contenido, no diciendo "gratis".
-const VALUE_STACK = [
-  "Repasamos juntos tu Growth Score y tus 3 fugas",
-  "Te mostramos cómo el Growth Engine las resuelve",
-  "Sales con un plan de prioridades para tu tienda",
-];
+// Etapas que dependen de data interna → se profundizan en la llamada.
+const LOCKED = new Set(["Retention", "Feedback", "Systems"]);
 
-// Pantalla 9 — Resultado: el ajá moment, estructurado para que quieran agendar.
+const SEG_COLOR: Record<string, string> = {
+  Sano: "bg-emerald-400",
+  Optimizable: "bg-amber-400",
+  Urgente: "bg-red-400",
+};
+
+// Pantalla — Resultado: lectura rápida y visual del engine → agendar.
+// El detalle profundo va en el Harubom por mail (no acá).
 export function ResultScreen({
   result,
   url,
@@ -29,6 +30,10 @@ export function ResultScreen({
   onBook: () => void;
 }) {
   const fmt = (n: number) => n.toLocaleString("es-CL");
+  const visible = result.areas.filter((a) => !LOCKED.has(a.key));
+  const urgent = visible
+    .filter((a) => a.status === "Urgente")
+    .sort((a, b) => a.score - b.score);
 
   return (
     <div className="text-center">
@@ -38,7 +43,7 @@ export function ResultScreen({
         </p>
       )}
 
-      {/* BLOQUE 1 — Score + veredicto */}
+      {/* Score + nivel */}
       <div className="mt-4">
         <ScoreRing score={result.score} />
       </div>
@@ -53,26 +58,51 @@ export function ResultScreen({
         {result.levelText}
       </p>
 
-      {/* BLOQUE "wow" — esto detectamos en tu tienda */}
-      {result.analyzed && result.detected.length > 0 && (
-        <div className="mt-6 rounded-xl2 border border-hair bg-bg-card/50 p-5 text-left">
-          <p className="mb-3 font-mono text-xs uppercase tracking-widest text-cyan">
-            Analizamos tu tienda · esto encontramos
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {result.detected.map((d) => (
-              <span
-                key={d}
-                className="rounded-full border border-hair bg-bg-soft px-3 py-1 font-mono text-xs text-ink-mute"
-              >
-                {d}
-              </span>
-            ))}
-          </div>
+      {/* Engine snapshot — barra visual de 8 etapas */}
+      <div className="mt-8 rounded-xl2 border border-hair bg-bg-card/50 p-5 text-left">
+        <p className="mb-3 font-mono text-xs uppercase tracking-widest text-cyan">
+          El estado de tu engine
+        </p>
+        <div className="flex gap-1.5">
+          {result.areas.map((a) => (
+            <div
+              key={a.key}
+              className={`h-2.5 flex-1 rounded-full ${
+                LOCKED.has(a.key) ? "bg-ink-faint/25" : SEG_COLOR[a.status]
+              }`}
+            />
+          ))}
         </div>
-      )}
+        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px] text-ink-faint">
+          <span>🟢 Sano</span>
+          <span>🟡 Optimizable</span>
+          <span>🔴 Urgente</span>
+          <span>🔒 En la llamada</span>
+        </div>
 
-      {/* BLOQUE 2 — Lo que te está costando */}
+        {urgent.length > 0 ? (
+          <div className="mt-4 border-t border-hair/40 pt-4">
+            <p className="mb-2 text-sm font-semibold text-ink">
+              Tus fugas más urgentes:
+            </p>
+            <ul className="flex flex-col gap-2">
+              {urgent.slice(0, 2).map((a) => (
+                <li key={a.key} className="text-sm">
+                  <span className="font-semibold text-red-300">{a.label}.</span>{" "}
+                  <span className="text-ink-mute">{a.finding}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <p className="mt-4 border-t border-hair/40 pt-4 text-sm text-ink-mute">
+            Tu base está sólida. El próximo nivel son ajustes finos — los vemos
+            en la llamada.
+          </p>
+        )}
+      </div>
+
+      {/* Pérdida estimada — un solo número fuerte */}
       {result.loss && (
         <div className="mt-6 rounded-xl2 border border-red-400/30 bg-red-500/5 p-6 text-center">
           <p className="font-mono text-xs uppercase tracking-widest text-red-300">
@@ -82,147 +112,34 @@ export function ResultScreen({
             US${fmt(result.loss.low)} – {fmt(result.loss.high)}
             <span className="text-lg font-semibold text-ink-mute"> / mes</span>
           </p>
-          <p className="mt-2 text-sm text-ink-mute">
-            Estimado según tu facturación y las fugas detectadas. Cada mes que
-            sigue, se acumula.
-          </p>
         </div>
       )}
 
-      {/* BLOQUE 3 — Las 3 fugas (con curiosity gap) */}
-      <div className="mt-8 text-left">
-        <p className="mb-3 font-mono text-xs uppercase tracking-widest text-ink-faint">
-          {result.gaps.length === 1
-            ? "Tu próxima oportunidad"
-            : `Tus ${result.gaps.length} fugas más urgentes`}
+      {/* Anclaje de valor + CTA a la agenda */}
+      <div className="glass mt-8 rounded-xl2 p-6 text-center sm:p-8">
+        <p className="font-mono text-xs uppercase tracking-widest text-ink-faint">
+          Diagnóstico completo · valor US$500
         </p>
-        <div className="flex flex-col gap-3">
-          {result.gaps.map((gap, i) => (
-            <div
-              key={gap.key}
-              className="rounded-xl2 border border-hair bg-bg-card/50 p-4"
-            >
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-sm text-gradient">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span className="font-semibold text-ink">{gap.label}</span>
-                {gap.detected && (
-                  <span className="rounded-full bg-cyan/15 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-cyan">
-                    detectado
-                  </span>
-                )}
-              </div>
-              <p className="mt-1.5 text-sm text-ink-mute">{gap.finding}</p>
-            </div>
-          ))}
-        </div>
-        <p className="mt-3 text-sm text-ink-faint">
-          El plan exacto para destrabar cada una te lo mostramos en la sesión 1:1.
+        <p className="mt-2 text-sm text-ink-mute">
+          Lo preparamos con tu data y te lo enviamos al mail al agendar. Vigencia{" "}
+          <span className="font-semibold text-ink">48 horas</span>.
         </p>
-        {result.gaps.some((g) => g.key === "Systems") && (
-          <p className="mt-2 text-sm text-amber-300/90">
-            Automatizar antes de retener y escuchar solo escala el problema:
-            primero el orden, después los sistemas.
-          </p>
-        )}
-      </div>
-
-      {/* BLOQUE 4 — Tu score vs. tu potencial */}
-      <div className="mt-8 rounded-xl2 border border-hair bg-bg-card/50 p-5 text-left">
-        <p className="mb-4 font-mono text-xs uppercase tracking-widest text-ink-faint">
-          Dónde estás vs. dónde podrías estar
-        </p>
-        <BenchBar label="Tu tienda hoy" value={result.benchmark.you} accent />
-        <div className="h-3" />
-        <BenchBar
-          label="Tiendas que ordenan las 8 etapas"
-          value={result.benchmark.peers}
-        />
-        {result.benchmark.peers > result.benchmark.you && (
-          <p className="mt-3 text-sm text-ink-mute">
-            Te separan{" "}
-            <span className="font-semibold text-ink">
-              {result.benchmark.peers - result.benchmark.you} puntos
-            </span>{" "}
-            de las tiendas que ya ordenaron su negocio. Eso son ventas que estás
-            dejando pasar.
-          </p>
-        )}
-        <p className="mt-2 font-mono text-[11px] text-ink-faint">
-          * Promedio de referencia (estimado).
-        </p>
-      </div>
-
-      {/* BLOQUE 5 + 6 — Stack de valor + CTA con urgencia */}
-      <div className="glass mt-8 rounded-xl2 p-6 text-left">
-        <p className="text-center text-sm font-semibold text-ink">
-          En tu sesión 1:1 con un especialista de Advanz:
-        </p>
-        <ul className="mt-4 flex flex-col gap-2">
-          {VALUE_STACK.map((v) => (
-            <li key={v} className="flex items-start gap-2 text-sm text-ink-mute">
-              <svg
-                viewBox="0 0 20 20"
-                className="mt-0.5 h-4 w-4 shrink-0 text-cyan"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M16.7 5.3a1 1 0 010 1.4l-7.5 7.5a1 1 0 01-1.4 0l-3.5-3.5a1 1 0 111.4-1.4l2.8 2.8 6.8-6.8a1 1 0 011.4 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              {v}
-            </li>
-          ))}
-        </ul>
-
         <button
           type="button"
           onClick={onBook}
-          className="bg-gradient-brand mt-6 inline-flex min-h-[52px] w-full items-center justify-center rounded-full px-7 py-3 text-base font-semibold text-bg transition-transform duration-200 hover:scale-[1.02] active:scale-100"
+          className="bg-gradient-brand mt-5 inline-flex min-h-[54px] w-full items-center justify-center rounded-full px-7 py-3 text-base font-semibold text-bg transition-transform duration-200 hover:scale-[1.02] active:scale-100"
         >
           Agendar mi sesión 1:1
         </button>
-        <p className="mt-3 text-center font-mono text-xs text-ink-faint">
-          Cupos limitados por semana · sin compromiso
+        <p className="mt-3 font-mono text-xs text-ink-faint">
+          30 min · sin compromiso · salimos con un plan claro
         </p>
       </div>
 
       <p className="mt-5 font-mono text-xs text-ink-faint">
-        📩 Tu informe completo va a{" "}
+        📩 Agendes o no, tu informe llega a{" "}
         <span className="text-ink-mute break-all">{email || "tu email"}</span>
       </p>
-    </div>
-  );
-}
-
-function BenchBar({
-  label,
-  value,
-  accent,
-}: {
-  label: string;
-  value: number;
-  accent?: boolean;
-}) {
-  const pct = Math.max(4, Math.min(100, (value / MAX_SCORE) * 100));
-  return (
-    <div>
-      <div className="mb-1 flex items-center justify-between text-xs">
-        <span className="text-ink-mute">{label}</span>
-        <span className="font-mono text-ink">{value}</span>
-      </div>
-      <div className="h-2.5 overflow-hidden rounded-full bg-bg-soft">
-        <div
-          className={`h-full rounded-full ${
-            accent ? "bg-gradient-brand" : "bg-ink-faint/50"
-          }`}
-          style={{ width: `${pct}%` }}
-        />
-      </div>
     </div>
   );
 }

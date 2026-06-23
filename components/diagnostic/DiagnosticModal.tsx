@@ -13,7 +13,6 @@ const BOOKING_URL =
 
 import { ProgressBar } from "@/components/diagnostic/ProgressBar";
 import { IntroScreen } from "@/components/diagnostic/IntroScreen";
-import { PainScreen } from "@/components/diagnostic/PainScreen";
 import { QuestionScreen } from "@/components/diagnostic/QuestionScreen";
 import { GateScreen } from "@/components/diagnostic/GateScreen";
 import { CalculatingScreen } from "@/components/diagnostic/CalculatingScreen";
@@ -22,18 +21,11 @@ import { ResultScreen } from "@/components/diagnostic/ResultScreen";
 // ----------------------------------------------------------------
 // Estado del diagnóstico (un solo useReducer, como pide el brief).
 // ----------------------------------------------------------------
-type Step =
-  | "intro"
-  | "pains"
-  | "question"
-  | "gate"
-  | "calculating"
-  | "result";
+type Step = "intro" | "question" | "gate" | "calculating" | "result";
 
 type State = {
   step: Step;
   questionIndex: number;
-  pain: string | null;
   answers: Record<string, number>;
   lead: Lead;
   signals: SiteSignals | null;
@@ -43,7 +35,6 @@ type State = {
 type Action =
   | { type: "INIT"; url: string }
   | { type: "START" }
-  | { type: "SELECT_PAIN"; pain: string }
   | { type: "ANSWER"; score: number }
   | { type: "BACK" }
   | { type: "SET_LEAD"; field: keyof Lead; value: string }
@@ -54,7 +45,6 @@ function initialState(url = ""): State {
   return {
     step: "intro",
     questionIndex: 0,
-    pain: null,
     answers: {},
     lead: { name: "", email: "", whatsapp: "", url },
     signals: null,
@@ -68,10 +58,7 @@ function reducer(state: State, action: Action): State {
       return initialState(action.url);
 
     case "START":
-      return { ...state, step: "pains" };
-
-    case "SELECT_PAIN":
-      return { ...state, pain: action.pain, step: "question", questionIndex: 0 };
+      return { ...state, step: "question", questionIndex: 0 };
 
     case "ANSWER": {
       const q = questions[state.questionIndex];
@@ -83,9 +70,8 @@ function reducer(state: State, action: Action): State {
     }
 
     case "BACK": {
-      if (state.step === "pains") return { ...state, step: "intro" };
       if (state.step === "question") {
-        if (state.questionIndex === 0) return { ...state, step: "pains" };
+        if (state.questionIndex === 0) return { ...state, step: "intro" };
         return { ...state, questionIndex: state.questionIndex - 1 };
       }
       if (state.step === "gate") {
@@ -113,12 +99,12 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-// Progreso visible solo en pains → preguntas → gate (6 pasos).
+// Progreso visible en preguntas → gate (5 preguntas + datos = 6 pasos).
 function progressInfo(state: State): { current: number; total: number } | null {
-  if (state.step === "pains") return { current: 1, total: 7 };
+  const total = questions.length + 1; // preguntas + gate
   if (state.step === "question")
-    return { current: state.questionIndex + 2, total: 7 };
-  if (state.step === "gate") return { current: 7, total: 7 };
+    return { current: state.questionIndex + 1, total };
+  if (state.step === "gate") return { current: total, total };
   return null;
 }
 
@@ -161,9 +147,16 @@ export function DiagnosticModal() {
       email: state.lead.email,
       whatsapp: state.lead.whatsapp,
       url: state.lead.url,
-      pain: state.pain,
       score: r.score,
       level: r.level,
+      // Respuestas de filtro crudas (para calificar y nutrir en GHL).
+      respuestas: state.answers,
+      // Estado por etapa del engine.
+      etapas: r.areas.map((a) => ({
+        etapa: a.label,
+        estado: a.status,
+        score: a.score,
+      })),
       gaps: r.gaps.map((g) => ({ area: g.label, score: g.score })),
       loss: r.loss,
       detected: r.detected,
@@ -172,7 +165,7 @@ export function DiagnosticModal() {
       pageUrl: typeof window !== "undefined" ? window.location.href : "",
       referrer: typeof document !== "undefined" ? document.referrer : "",
     });
-  }, [state.step, state.result, state.lead, state.pain]);
+  }, [state.step, state.result, state.lead, state.answers]);
 
   // Bloqueo de scroll + restaurar foco al cerrar.
   useEffect(() => {
@@ -226,10 +219,7 @@ export function DiagnosticModal() {
   if (!isOpen) return null;
 
   const progress = progressInfo(state);
-  const canGoBack =
-    state.step === "pains" ||
-    state.step === "question" ||
-    state.step === "gate";
+  const canGoBack = state.step === "question" || state.step === "gate";
 
   return (
     <div
@@ -298,13 +288,6 @@ export function DiagnosticModal() {
             <IntroScreen
               url={state.lead.url}
               onStart={() => dispatch({ type: "START" })}
-            />
-          )}
-
-          {state.step === "pains" && (
-            <PainScreen
-              selected={state.pain}
-              onSelect={(pain) => dispatch({ type: "SELECT_PAIN", pain })}
             />
           )}
 

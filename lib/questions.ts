@@ -38,17 +38,6 @@ export const questions: Question[] = [
     ],
   },
   {
-    key: "workflows",
-    stage: "Workflows",
-    prompt: "¿Tus herramientas (web, ads, email, datos) trabajan conectadas?",
-    options: [
-      { label: "Sí, todo conversa y está integrado", score: 5 },
-      { label: "Algunas conectadas, otras sueltas", score: 3 },
-      { label: "Cada herramienta va por su lado", score: 2 },
-      { label: "Casi no tengo esas herramientas", score: 1 },
-    ],
-  },
-  {
     key: "retencion",
     stage: "Retention",
     prompt: "¿Cómo está tu retención y recompra?",
