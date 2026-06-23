@@ -40,6 +40,13 @@ export function GateScreen({
         Completa esto para ver tu diagnóstico y recibir el informe completo.
       </p>
 
+      {!needsUrl && lead.url && (
+        <p className="mt-3 inline-flex w-fit items-center gap-2 rounded-full border border-hair bg-bg-soft px-3 py-1.5 font-mono text-xs text-ink-mute">
+          <span className="h-1.5 w-1.5 rounded-full bg-cyan" />
+          Analizando {lead.url}
+        </p>
+      )}
+
       <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4" noValidate>
         <Field
           label="Nombre"

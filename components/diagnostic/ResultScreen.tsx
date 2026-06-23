@@ -8,8 +8,8 @@ const LEVEL_STYLES: Record<string, string> = {
   Avanzado: "text-cyan",
 };
 
-// Qué pasa en la auditoría gratuita (describe el proceso, no promete regalos).
-// TODO: confirmar con Matias los entregables reales del audit.
+// Qué pasa en la sesión 1:1 (describe el proceso, no promete regalos).
+// El valor se transmite por el contenido, no diciendo "gratis".
 const VALUE_STACK = [
   "Repasamos juntos tu Growth Score y tus 3 fugas",
   "Te mostramos cómo el Growth Engine las resuelve",
@@ -120,9 +120,6 @@ export function ResultScreen({
         <p className="mt-3 text-sm text-ink-faint">
           El plan exacto para destrabar cada una te lo mostramos en la sesión 1:1.
         </p>
-        <p className="mt-2 text-sm text-ink-mute">
-          Cada etapa que ordenas acelera la siguiente — por eso el orden importa.
-        </p>
         {result.gaps.some((g) => g.key === "Systems") && (
           <p className="mt-2 text-sm text-amber-300/90">
             Automatizar antes de retener y escuchar solo escala el problema:
@@ -131,18 +128,28 @@ export function ResultScreen({
         )}
       </div>
 
-      {/* BLOQUE 4 — Benchmark vs. pares */}
+      {/* BLOQUE 4 — Tu score vs. tu potencial */}
       <div className="mt-8 rounded-xl2 border border-hair bg-bg-card/50 p-5 text-left">
         <p className="mb-4 font-mono text-xs uppercase tracking-widest text-ink-faint">
-          Cómo estás vs. otras tiendas
+          Dónde estás vs. dónde podrías estar
         </p>
-        <BenchBar label="Tu tienda" value={result.benchmark.you} accent />
+        <BenchBar label="Tu tienda hoy" value={result.benchmark.you} accent />
         <div className="h-3" />
         <BenchBar
-          label="Ordenaron su Growth Engine"
+          label="Tiendas que ordenan las 8 etapas"
           value={result.benchmark.peers}
         />
-        <p className="mt-3 font-mono text-[11px] text-ink-faint">
+        {result.benchmark.peers > result.benchmark.you && (
+          <p className="mt-3 text-sm text-ink-mute">
+            Te separan{" "}
+            <span className="font-semibold text-ink">
+              {result.benchmark.peers - result.benchmark.you} puntos
+            </span>{" "}
+            de las tiendas que ya ordenaron su negocio. Eso son ventas que estás
+            dejando pasar.
+          </p>
+        )}
+        <p className="mt-2 font-mono text-[11px] text-ink-faint">
           * Promedio de referencia (estimado).
         </p>
       </div>
@@ -150,7 +157,7 @@ export function ResultScreen({
       {/* BLOQUE 5 + 6 — Stack de valor + CTA con urgencia */}
       <div className="glass mt-8 rounded-xl2 p-6 text-left">
         <p className="text-center text-sm font-semibold text-ink">
-          En tu sesión 1:1 con Advanz (gratis):
+          En tu sesión 1:1 con un especialista de Advanz:
         </p>
         <ul className="mt-4 flex flex-col gap-2">
           {VALUE_STACK.map((v) => (
@@ -177,10 +184,10 @@ export function ResultScreen({
           onClick={onBook}
           className="bg-gradient-brand mt-6 inline-flex min-h-[52px] w-full items-center justify-center rounded-full px-7 py-3 text-base font-semibold text-bg transition-transform duration-200 hover:scale-[1.02] active:scale-100"
         >
-          Agendar mi sesión 1:1 gratis
+          Agendar mi sesión 1:1
         </button>
         <p className="mt-3 text-center font-mono text-xs text-ink-faint">
-          Cupos limitados por semana · sin costo · sin compromiso
+          Cupos limitados por semana · sin compromiso
         </p>
       </div>
 

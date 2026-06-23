@@ -15,7 +15,7 @@ export function Hero() {
       <div className="relative mx-auto max-w-3xl text-center">
         <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-hair bg-bg-card/60 px-4 py-1.5 font-mono text-xs uppercase tracking-[0.18em] text-ink-mute">
           <span className="h-1.5 w-1.5 rounded-full bg-cyan" />
-          Diagnóstico gratuito · 90 segundos
+          Tu Growth Score en 90 segundos
         </p>
 
         <h1 className="text-balance text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl md:text-6xl">

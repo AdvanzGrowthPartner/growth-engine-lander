@@ -20,7 +20,7 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   title: "Growth Engine™ — Descubre dónde está la fuga de tu ecommerce",
   description:
-    "Deja la URL de tu tienda y recibe tu Growth Score en pantalla más un informe completo. Diagnóstico gratuito del Growth Engine de Advanz: 8 etapas para escalar tu ecommerce.",
+    "Deja la URL de tu tienda y recibe tu Growth Score en pantalla más un informe completo. Diagnóstico del Growth Engine de Advanz: 8 etapas para escalar tu ecommerce.",
   metadataBase: new URL("https://web.advanz.cl"),
   openGraph: {
     title: "Growth Engine™ — Tu Growth Score en 90 segundos",
