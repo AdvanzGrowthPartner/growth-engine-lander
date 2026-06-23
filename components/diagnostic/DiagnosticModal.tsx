@@ -4,7 +4,12 @@ import { useCallback, useEffect, useReducer, useRef } from "react";
 import { useDiagnostic } from "@/components/diagnostic/DiagnosticProvider";
 import { questions } from "@/lib/questions";
 import { computeResult } from "@/lib/scoring";
+import { getUtmParams, sendLead } from "@/lib/lead";
 import type { DiagnosticResult, Lead, SiteSignals } from "@/types/diagnostic";
+
+// Calendario de GHL para agendar la sesión 1:1 (configurable por entorno).
+const BOOKING_URL =
+  process.env.NEXT_PUBLIC_GHL_CALENDAR_URL || "https://web.advanz.cl";
 
 import { ProgressBar } from "@/components/diagnostic/ProgressBar";
 import { IntroScreen } from "@/components/diagnostic/IntroScreen";
@@ -130,6 +135,7 @@ export function DiagnosticModal() {
   const panelRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const prevFocus = useRef<HTMLElement | null>(null);
+  const leadSent = useRef(false);
 
   // Callback estable para que CalculatingScreen no re-dispare el análisis.
   const handleFinish = useCallback(
@@ -139,8 +145,34 @@ export function DiagnosticModal() {
 
   // Reset al abrir, con la URL capturada.
   useEffect(() => {
-    if (isOpen) dispatch({ type: "INIT", url: storeUrl });
+    if (isOpen) {
+      leadSent.current = false;
+      dispatch({ type: "INIT", url: storeUrl });
+    }
   }, [isOpen, storeUrl]);
+
+  // Cuando el resultado está listo, enviar el lead a GHL (una sola vez).
+  useEffect(() => {
+    if (state.step !== "result" || !state.result || leadSent.current) return;
+    leadSent.current = true;
+    const r = state.result;
+    sendLead({
+      name: state.lead.name,
+      email: state.lead.email,
+      whatsapp: state.lead.whatsapp,
+      url: state.lead.url,
+      pain: state.pain,
+      score: r.score,
+      level: r.level,
+      gaps: r.gaps.map((g) => ({ area: g.label, score: g.score })),
+      loss: r.loss,
+      detected: r.detected,
+      analyzed: r.analyzed,
+      utm: getUtmParams(),
+      pageUrl: typeof window !== "undefined" ? window.location.href : "",
+      referrer: typeof document !== "undefined" ? document.referrer : "",
+    });
+  }, [state.step, state.result, state.lead, state.pain]);
 
   // Bloqueo de scroll + restaurar foco al cerrar.
   useEffect(() => {
@@ -305,11 +337,7 @@ export function DiagnosticModal() {
               url={state.lead.url}
               email={state.lead.email}
               onBook={() =>
-                window.open(
-                  "https://web.advanz.cl",
-                  "_blank",
-                  "noopener,noreferrer"
-                )
+                window.open(BOOKING_URL, "_blank", "noopener,noreferrer")
               }
             />
           )}
