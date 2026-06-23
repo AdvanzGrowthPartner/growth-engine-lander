@@ -41,9 +41,15 @@ export default function RootLayout({
     <html
       lang="es"
       data-scroll-behavior="smooth"
+      suppressHydrationWarning
       className={`${poppins.variable} ${spaceGrotesk.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-bg text-ink">{children}</body>
+      <body
+        suppressHydrationWarning
+        className="min-h-full bg-bg text-ink"
+      >
+        {children}
+      </body>
     </html>
   );
 }
