@@ -11,9 +11,9 @@ const LEVEL_STYLES: Record<string, string> = {
 // Qué pasa en la auditoría gratuita (describe el proceso, no promete regalos).
 // TODO: confirmar con Matias los entregables reales del audit.
 const VALUE_STACK = [
-  "Revisamos tu Growth Score punto por punto",
-  "Te mostramos cómo destrabar tus 3 fugas principales",
-  "Te vas con prioridades claras para tu etapa de negocio",
+  "Repasamos juntos tu Growth Score y tus 3 fugas",
+  "Te mostramos cómo el Growth Engine las resuelve",
+  "Sales con un plan de prioridades para tu tienda",
 ];
 
 // Pantalla 9 — Resultado: el ajá moment, estructurado para que quieran agendar.
@@ -116,7 +116,7 @@ export function ResultScreen({
           ))}
         </div>
         <p className="mt-3 text-sm text-ink-faint">
-          El plan exacto para destrabar cada una te lo mostramos en la auditoría.
+          El plan exacto para destrabar cada una te lo mostramos en la sesión 1:1.
         </p>
       </div>
 
@@ -139,7 +139,7 @@ export function ResultScreen({
       {/* BLOQUE 5 + 6 — Stack de valor + CTA con urgencia */}
       <div className="glass mt-8 rounded-xl2 p-6 text-left">
         <p className="text-center text-sm font-semibold text-ink">
-          En tu auditoría gratuita 1:1:
+          En tu sesión 1:1 con Advanz (gratis):
         </p>
         <ul className="mt-4 flex flex-col gap-2">
           {VALUE_STACK.map((v) => (
@@ -166,7 +166,7 @@ export function ResultScreen({
           onClick={onBook}
           className="bg-gradient-brand mt-6 inline-flex min-h-[52px] w-full items-center justify-center rounded-full px-7 py-3 text-base font-semibold text-bg transition-transform duration-200 hover:scale-[1.02] active:scale-100"
         >
-          Agendar mi auditoría gratuita
+          Agendar mi sesión 1:1 gratis
         </button>
         <p className="mt-3 text-center font-mono text-xs text-ink-faint">
           Cupos limitados por semana · sin costo · sin compromiso
