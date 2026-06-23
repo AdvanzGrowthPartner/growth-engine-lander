@@ -1,26 +1,24 @@
-import { CTAButton } from "@/components/landing/CTAButton";
+import { BookingSection } from "@/components/landing/BookingSection";
 
-// Sección 6 — Cómo funciona (3 pasos) + bloque CTA final con objection handling.
+// Sección 6 — Cómo funciona (3 pasos) + doble CTA: agendar (GHL) + form mail.
 
 const steps = [
   {
     n: "01",
-    title: "Dejas la URL de tu tienda",
-    body: "Sin instalar nada. Analizamos con data pública.",
+    title: "Nos compartes la URL de tu tienda",
+    body: "Sin instalar nada. Analizamos con data pública más tus respuestas.",
   },
   {
     n: "02",
-    title: "Respondes 6 preguntas rápidas",
-    body: "Te toma unos 90 segundos. Una pantalla a la vez.",
+    title: "Agendas o dejas tu mail",
+    body: "Diagnóstico en vivo de 30 min, o lo recibís detallado por correo.",
   },
   {
     n: "03",
-    title: "Recibes tu Growth Score",
-    body: "En pantalla al instante, más el informe completo por mail.",
+    title: "Sabes exactamente qué arreglar primero",
+    body: "Prioridades claras por etapa del Growth Engine, sin adivinar.",
   },
 ];
-
-const objections = ["Sin tarjeta", "Cualquier ecommerce", "Resultado inmediato"];
 
 export function FinalCTA() {
   return (
@@ -48,46 +46,9 @@ export function FinalCTA() {
           ))}
         </div>
 
-        {/* Bloque CTA final */}
-        <div className="glass relative mt-12 overflow-hidden rounded-xl3 p-10 text-center sm:p-14">
-          <div className="glow-violet pointer-events-none absolute -top-20 left-1/2 h-[400px] w-[400px] -translate-x-1/2 opacity-50" />
-          <div className="relative">
-            <h2 className="mx-auto max-w-2xl text-balance text-3xl font-bold tracking-tight sm:text-4xl">
-              Descubre tu Growth Score{" "}
-              <span className="text-gradient">en 90 segundos</span>
-            </h2>
-            <p className="mx-auto mt-4 max-w-xl text-ink-mute">
-              Deja de adivinar qué arreglar. Empieza por saber exactamente dónde
-              está la fuga.
-            </p>
-
-            <div className="mt-8 flex justify-center">
-              <CTAButton />
-            </div>
-
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-              {objections.map((o) => (
-                <span
-                  key={o}
-                  className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-widest text-ink-faint"
-                >
-                  <svg
-                    viewBox="0 0 20 20"
-                    className="h-3.5 w-3.5 text-cyan"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.7 5.3a1 1 0 010 1.4l-7.5 7.5a1 1 0 01-1.4 0l-3.5-3.5a1 1 0 111.4-1.4l2.8 2.8 6.8-6.8a1 1 0 011.4 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  {o}
-                </span>
-              ))}
-            </div>
-          </div>
+        {/* Doble CTA: agendar + mail */}
+        <div className="mt-12">
+          <BookingSection />
         </div>
       </div>
     </section>

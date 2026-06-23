@@ -2,6 +2,7 @@ import { DiagnosticProvider } from "@/components/diagnostic/DiagnosticProvider";
 import { DiagnosticModal } from "@/components/diagnostic/DiagnosticModal";
 import { Nav } from "@/components/landing/Nav";
 import { Hero } from "@/components/landing/Hero";
+import { ResultsMarquee } from "@/components/landing/ResultsMarquee";
 import { ProblemSolution } from "@/components/landing/ProblemSolution";
 import { GrowthEngine } from "@/components/landing/GrowthEngine";
 import { DiagnosticIncludes } from "@/components/landing/DiagnosticIncludes";
@@ -15,6 +16,7 @@ export default function Home() {
       <Nav />
       <main>
         <Hero />
+        <ResultsMarquee />
         <ProblemSolution />
         <GrowthEngine />
         <DiagnosticIncludes />

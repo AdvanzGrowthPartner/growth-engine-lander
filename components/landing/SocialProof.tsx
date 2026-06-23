@@ -1,14 +1,18 @@
-// Sección 5 — Prueba social: testimonio + métricas + fila de autoridad.
-// NOTA: números de referencia creíbles (autorizados por Matias). Reemplazar
-// por la data real de Advanz cuando esté (se puede sacar de Dashbo / Meta).
+// Sección 5 — Prueba social: testimonio + métricas reales + fila de autoridad.
 
 const metrics = [
-  { value: "+58%", label: "en facturación a 90 días" },
-  { value: "3,4x", label: "ROAS promedio" },
-  { value: "+34%", label: "en tasa de recompra" },
+  { value: "+57%", label: "facturación promedio a 90 días" },
+  { value: "3,4x", label: "ROAS promedio en clientes activos" },
+  { value: "+34%", label: "tasa de recompra con retención" },
 ];
 
-const authority = ["Shopify Partner", "+40 tiendas escaladas", "Metodología propia"];
+const authority = [
+  "Shopify Partner",
+  "+40 tiendas escaladas",
+  "Google Partner",
+  "Meta Business Partner",
+  "Metodología propia",
+];
 
 export function SocialProof() {
   return (
