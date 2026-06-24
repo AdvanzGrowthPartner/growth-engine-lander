@@ -113,7 +113,7 @@ export async function POST(request: Request) {
     }
 
     // Meta CAPI (server-side) — best-effort.
-    await sendCapiLead({
+    const capi = await sendCapiLead({
       email: body.email as string,
       phone: body.whatsapp as string,
       eventSourceUrl: body.pageUrl as string,
@@ -126,6 +126,7 @@ export async function POST(request: Request) {
       contactId: up.contactId,
       customFieldsSent: customFields.length,
       opportunityCreated,
+      capi,
     });
   } catch {
     return NextResponse.json({ ok: false, reason: "ghl_failed" }, { status: 502 });
