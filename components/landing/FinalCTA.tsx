@@ -11,7 +11,7 @@ const steps = [
   {
     n: "02",
     title: "Agendas o dejas tu mail",
-    body: "Diagnóstico en vivo de 30 min, o lo recibís detallado por correo.",
+    body: "Diagnóstico en vivo de 30 min, o lo recibes detallado por correo.",
   },
   {
     n: "03",

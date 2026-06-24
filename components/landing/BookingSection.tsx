@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { getUtmParams, sendLead } from "@/lib/lead";
 
 const GHL_CALENDAR_URL =
   "https://web.advanz.cl/widget/booking/t9l81TCLLeZ0sr3z4Aoa";
@@ -15,10 +16,16 @@ export function BookingSection() {
 
   function handleFormSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // TODO Phase 2: enviar a GHL webhook / pipeline de leads tibios
-    // Por ahora abre el formulario de GHL con los datos pre-llenados
-    const ghlForm = `https://web.advanz.cl/form/diagnostico?email=${encodeURIComponent(email)}&url=${encodeURIComponent(shopUrl)}`;
-    window.open(ghlForm, "_blank", "noopener");
+    // Lead tibio (no hizo el diagnóstico) → cae en el pipeline de GHL.
+    sendLead({
+      email,
+      url: shopUrl,
+      leadType: "tibio",
+      source: "booking-form",
+      utm: getUtmParams(),
+      pageUrl: typeof window !== "undefined" ? window.location.href : "",
+      referrer: typeof document !== "undefined" ? document.referrer : "",
+    });
     setFormState("sent");
   }
 
@@ -56,7 +63,7 @@ export function BookingSection() {
                 clipRule="evenodd"
               />
             </svg>
-            Agendar diagnóstico gratuito
+            Agendar mi sesión 1:1
           </button>
         </div>
 
@@ -86,7 +93,7 @@ export function BookingSection() {
         {formState === "idle" ? (
           <div className="mx-auto max-w-md">
             <p className="mb-4 text-sm text-ink-mute">
-              Dejanos tu mail y la URL de tu tienda y te enviamos el Diagnóstico
+              Déjanos tu mail y la URL de tu tienda y te enviamos el Diagnóstico
               Growth Engine por correo.
             </p>
             <form
@@ -129,14 +136,14 @@ export function BookingSection() {
               Listo — te enviamos el diagnóstico en las próximas horas.
             </p>
             <p className="mt-1 text-sm text-ink-mute">
-              Revisá tu bandeja de entrada (y el spam, por las dudas).
+              Revisa tu bandeja de entrada (y el spam, por las dudas).
             </p>
           </div>
         )}
 
         {/* Objection handling */}
         <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-          {["Sin tarjeta", "100% gratuito", "Resultado en 24 hs"].map((o) => (
+          {["Sin tarjeta", "Sin compromiso", "Resultado en 24 hs"].map((o) => (
             <span
               key={o}
               className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-widest text-ink-faint"

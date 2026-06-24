@@ -65,13 +65,14 @@ export async function POST(request: Request) {
       ...cf("UTM Campaign", utm.utm_campaign),
     ];
 
+    const tipo = body.leadType === "tibio" ? "tibio" : "caliente";
     const up = await upsertContact(token, locationId, {
       firstName: (body.name as string) || "",
       email: (body.email as string) || "",
       phone: (body.whatsapp as string) || "",
       website: (body.url as string) || "",
-      source: "growth-engine-lander",
-      tags: ["diagnostico"],
+      source: (body.source as string) || "growth-engine-lander",
+      tags: ["diagnostico", tipo],
       customFields,
     });
 

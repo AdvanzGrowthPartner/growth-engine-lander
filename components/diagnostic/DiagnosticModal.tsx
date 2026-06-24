@@ -9,7 +9,8 @@ import type { DiagnosticResult, Lead, SiteSignals } from "@/types/diagnostic";
 
 // Calendario de GHL para agendar la sesión 1:1 (configurable por entorno).
 const BOOKING_URL =
-  process.env.NEXT_PUBLIC_GHL_CALENDAR_URL || "https://web.advanz.cl";
+  process.env.NEXT_PUBLIC_GHL_CALENDAR_URL ||
+  "https://web.advanz.cl/widget/booking/t9l81TCLLeZ0sr3z4Aoa";
 
 import { ProgressBar } from "@/components/diagnostic/ProgressBar";
 import { IntroScreen } from "@/components/diagnostic/IntroScreen";
