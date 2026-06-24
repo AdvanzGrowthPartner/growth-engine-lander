@@ -92,7 +92,6 @@ export async function POST(request: Request) {
       customFields,
     });
 
-    let opportunityCreated = false;
     if (up.contactId) {
       const stage = await getPipelineStage(
         token,
@@ -101,19 +100,18 @@ export async function POST(request: Request) {
         stageName
       );
       if (stage?.pipelineId) {
-        const opp = await createOpportunity(token, locationId, {
+        await createOpportunity(token, locationId, {
           pipelineId: stage.pipelineId,
           pipelineStageId: stage.stageId,
           contactId: up.contactId,
           name: `${(body.url as string) || "Sin URL"} | ${(body.name as string) || "Lead"} | Diagnóstico`,
           status: "open",
         });
-        opportunityCreated = opp.ok;
       }
     }
 
     // Meta CAPI (server-side) — best-effort.
-    const capi = await sendCapiLead({
+    await sendCapiLead({
       email: body.email as string,
       phone: body.whatsapp as string,
       eventSourceUrl: body.pageUrl as string,
@@ -121,13 +119,7 @@ export async function POST(request: Request) {
       userAgent: request.headers.get("user-agent") || undefined,
     });
 
-    return NextResponse.json({
-      ok: up.ok,
-      contactId: up.contactId,
-      customFieldsSent: customFields.length,
-      opportunityCreated,
-      capi,
-    });
+    return NextResponse.json({ ok: up.ok });
   } catch {
     return NextResponse.json({ ok: false, reason: "ghl_failed" }, { status: 502 });
   }
