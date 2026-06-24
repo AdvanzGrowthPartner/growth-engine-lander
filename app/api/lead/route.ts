@@ -20,8 +20,8 @@ function labelFor(key: string, score: number | undefined): string {
 export async function POST(request: Request) {
   const token = process.env.GHL_API_TOKEN;
   const locationId = process.env.GHL_LOCATION_ID;
-  const pipelineName = process.env.GHL_PIPELINE_NAME || "Growth Engine";
-  const stageName = process.env.GHL_PIPELINE_STAGE || "Nuevo diagnóstico";
+  const pipelineName = process.env.GHL_PIPELINE_NAME || "Pipeline Advanz";
+  const stageName = process.env.GHL_PIPELINE_STAGE || "Nuevo Prospecto";
 
   let body: Record<string, unknown>;
   try {
@@ -88,7 +88,7 @@ export async function POST(request: Request) {
           pipelineId: stage.pipelineId,
           pipelineStageId: stage.stageId,
           contactId: up.contactId,
-          name: `${(body.name as string) || "Lead"} · ${(body.url as string) || ""}`.trim(),
+          name: `${(body.url as string) || "Sin URL"} | ${(body.name as string) || "Lead"} | Diagnóstico`,
           status: "open",
         });
       }
