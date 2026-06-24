@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { questions } from "@/lib/questions";
+import { sendCapiLead } from "@/lib/capi";
 import {
   createOpportunity,
   ensureCustomFields,
@@ -110,6 +111,15 @@ export async function POST(request: Request) {
         opportunityCreated = opp.ok;
       }
     }
+
+    // Meta CAPI (server-side) — best-effort.
+    await sendCapiLead({
+      email: body.email as string,
+      phone: body.whatsapp as string,
+      eventSourceUrl: body.pageUrl as string,
+      clientIp: request.headers.get("x-forwarded-for")?.split(",")[0]?.trim(),
+      userAgent: request.headers.get("user-agent") || undefined,
+    });
 
     return NextResponse.json({
       ok: up.ok,

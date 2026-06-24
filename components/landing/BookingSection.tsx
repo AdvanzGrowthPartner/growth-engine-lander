@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { getUtmParams, sendLead } from "@/lib/lead";
+import { track } from "@/lib/tracking";
 
 const GHL_CALENDAR_URL =
   "https://web.advanz.cl/widget/booking/t9l81TCLLeZ0sr3z4Aoa";
@@ -26,6 +27,7 @@ export function BookingSection() {
       pageUrl: typeof window !== "undefined" ? window.location.href : "",
       referrer: typeof document !== "undefined" ? document.referrer : "",
     });
+    track("Lead", { leadType: "tibio" });
     setFormState("sent");
   }
 
@@ -48,7 +50,12 @@ export function BookingSection() {
         <div className="mt-8">
           <button
             type="button"
-            onClick={() => setCalendarOpen((v) => !v)}
+            onClick={() =>
+              setCalendarOpen((v) => {
+                if (!v) track("Schedule");
+                return !v;
+              })
+            }
             className="bg-gradient-brand inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-full px-8 py-3 text-base font-semibold text-bg shadow-[0_8px_30px_rgba(193,93,255,0.3)] transition-transform duration-200 hover:scale-[1.02] active:scale-100"
           >
             <svg

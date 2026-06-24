@@ -5,6 +5,7 @@ import { useDiagnostic } from "@/components/diagnostic/DiagnosticProvider";
 import { questions } from "@/lib/questions";
 import { computeResult } from "@/lib/scoring";
 import { getUtmParams, sendLead } from "@/lib/lead";
+import { track } from "@/lib/tracking";
 import type { DiagnosticResult, Lead, SiteSignals } from "@/types/diagnostic";
 
 // Calendario de GHL para agendar la sesión 1:1 (configurable por entorno).
@@ -143,6 +144,7 @@ export function DiagnosticModal() {
     if (state.step !== "result" || !state.result || leadSent.current) return;
     leadSent.current = true;
     const r = state.result;
+    track("Lead", { value: r.score, level: r.level, currency: "USD" });
     sendLead({
       name: state.lead.name,
       email: state.lead.email,
@@ -320,9 +322,10 @@ export function DiagnosticModal() {
               result={state.result}
               url={state.lead.url}
               email={state.lead.email}
-              onBook={() =>
-                window.open(BOOKING_URL, "_blank", "noopener,noreferrer")
-              }
+              onBook={() => {
+                track("Schedule");
+                window.open(BOOKING_URL, "_blank", "noopener,noreferrer");
+              }}
             />
           )}
         </div>

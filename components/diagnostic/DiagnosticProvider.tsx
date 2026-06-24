@@ -7,6 +7,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { track } from "@/lib/tracking";
 
 // Contexto compartido del diagnóstico.
 // Es el "contrato" estable entre la landing (que dispara los CTAs)
@@ -28,6 +29,7 @@ export function DiagnosticProvider({ children }: { children: ReactNode }) {
   const open = useCallback((url?: string) => {
     if (typeof url === "string" && url.trim()) setStoreUrl(url.trim());
     setIsOpen(true);
+    track("StartDiagnostic");
   }, []);
 
   const close = useCallback(() => setIsOpen(false), []);
