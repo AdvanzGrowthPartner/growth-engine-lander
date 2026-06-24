@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins, Space_Grotesk } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
 // Poppins NO es variable font → hay que declarar los pesos que usamos.
@@ -49,6 +51,8 @@ export default function RootLayout({
         className="min-h-full bg-bg text-ink"
       >
         {children}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
