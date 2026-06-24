@@ -89,6 +89,40 @@ export async function upsertContact(
   };
 }
 
+type FieldSpec = { name: string; dataType: string };
+
+// Asegura que existan los custom fields (los crea si faltan). Devuelve el mapa
+// nombre→id actualizado. Best-effort: si la creación falla, sigue sin romper.
+export async function ensureCustomFields(
+  token: string,
+  locationId: string,
+  specs: FieldSpec[]
+): Promise<Record<string, string>> {
+  const map = await getCustomFieldMap(token, locationId);
+  for (const spec of specs) {
+    if (map[spec.name.toLowerCase()]) continue;
+    try {
+      const res = await fetch(`${BASE}/locations/${locationId}/customFields`, {
+        method: "POST",
+        headers: headers(token),
+        body: JSON.stringify({ name: spec.name, dataType: spec.dataType }),
+      });
+      if (res.ok) {
+        const data = (await res.json()) as {
+          customField?: { id?: string };
+          id?: string;
+        };
+        const id = data.customField?.id ?? data.id;
+        if (id) map[spec.name.toLowerCase()] = id;
+      }
+    } catch {
+      // best-effort
+    }
+  }
+  fieldCache = map;
+  return map;
+}
+
 export async function createOpportunity(
   token: string,
   locationId: string,
