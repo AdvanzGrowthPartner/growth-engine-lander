@@ -7,10 +7,10 @@ import { track } from "@/lib/tracking";
 const GHL_CALENDAR_URL =
   "https://web.advanz.cl/widget/booking/t9l81TCLLeZ0sr3z4Aoa";
 
-// Doble destino CTA: calendario GHL (hot lead) + form mail (warm lead).
-// El calendario se expande inline — sin salir de la página.
+// Doble destino CTA: calendario GHL (hot lead) → abre en nueva pestaña
+// para evitar problemas de estilos del iframe cross-origin.
+// Form mail (warm lead) → envía lead "tibio" a /api/lead.
 export function BookingSection() {
-  const [calendarOpen, setCalendarOpen] = useState(false);
   const [formState, setFormState] = useState<"idle" | "sent">("idle");
   const [email, setEmail] = useState("");
   const [shopUrl, setShopUrl] = useState("");
@@ -46,16 +46,14 @@ export function BookingSection() {
           Solo el diagnóstico honesto de tu negocio.
         </p>
 
-        {/* CTA primario: calendario GHL */}
+        {/* CTA primario: calendario GHL — abre en nueva pestaña */}
         <div className="mt-8">
           <button
             type="button"
-            onClick={() =>
-              setCalendarOpen((v) => {
-                if (!v) track("Schedule");
-                return !v;
-              })
-            }
+            onClick={() => {
+              track("Schedule");
+              window.open(GHL_CALENDAR_URL, "_blank", "noopener,noreferrer");
+            }}
             className="bg-gradient-brand inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-full px-8 py-3 text-base font-semibold text-bg shadow-[0_8px_30px_rgba(193,93,255,0.3)] transition-transform duration-200 hover:scale-[1.02] active:scale-100"
           >
             <svg
@@ -73,19 +71,6 @@ export function BookingSection() {
             Agendar mi sesión 1:1
           </button>
         </div>
-
-        {/* Calendario GHL embebido — se expande al hacer clic */}
-        {calendarOpen && (
-          <div className="mt-6 overflow-hidden rounded-xl2 border border-hair">
-            <iframe
-              src={GHL_CALENDAR_URL}
-              title="Agendar diagnóstico Growth Engine"
-              className="h-[600px] w-full bg-white"
-              loading="lazy"
-              allow="payment"
-            />
-          </div>
-        )}
 
         {/* Divisor */}
         <div className="my-8 flex items-center gap-4">
